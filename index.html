@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=82" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=83" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -501,7 +501,11 @@ window.addEventListener('load', function() {
             // size only; the end of the rise is the absolute finalScale further down,
             // so growing the start narrows the growth range rather than moving the end.
             scale: isMobile ? 0.418 : 0.356,
-            baseOffset: heroHeight - (vh / 2) - (vh * 0.45)
+            // The centre line, then dropped by this fraction of a viewport so he starts
+            // below the badge. Mobile 0.40 = the previous 0.45 less 5%, lifting his
+            // starting position. Note this term shifts him at EVERY scroll position, so
+            // finalMoveUp carries a matching correction to hold the end where it was.
+            baseOffset: heroHeight - (vh / 2) - (vh * (isMobile ? 0.40 : 0.45))
         };
     }
     function jimmyTransform(extraY, scale) {
@@ -784,17 +788,18 @@ window.addEventListener('load', function() {
             //   *_DROP  - how far it is pushed below the viewport bottom. Position only.
             const SIZE_START = 1.30;   // at rest - a step further out than 1.425
             const SIZE_END   = 1.0;    // by ANIM_END - fully zoomed out, ~98% of the width
-            // Mobile start 0.70 = the previous 0.30 plus 40% of a viewport height.
-            const START_DROP = vh * (isMobile ? 0.70 : 1.45);
+            // Mobile start 0.80 = 0.70 plus a further 10% of a viewport height.
+            const START_DROP = vh * (isMobile ? 0.80 : 1.45);
             // Absolute, NOT derived from START_DROP. It used to be START_DROP + 0.10, which
             // meant every "lower the start" request silently dragged the ending position down
             // with it. 0.55 is where the end sat when it was last set deliberately.
             //
             // On mobile the width term below never wins, so the coverage floor IS vh + drop
             // and the image finishes at exactly its no-gap minimum. That makes the ending
-            // size and the ending drop the same number: the only way to end more zoomed out
-            // is a smaller drop. Mobile 0.30 (from 0.40) ends ~7% smaller for that reason.
-            const END_DROP   = vh * (isMobile ? 0.30 : 0.55);
+            // size and the ending drop the same number - a lower end is necessarily a
+            // larger, less zoomed-out end, because anything smaller would expose the top.
+            // Mobile 0.40 = 0.30 plus a further 10% of a viewport height.
+            const END_DROP   = vh * (isMobile ? 0.40 : 0.55);
             const drop = START_DROP + ((END_DROP - START_DROP) * progress);
 
             const heroPx = background.clientHeight || heroHeight;
@@ -900,7 +905,10 @@ window.addEventListener('load', function() {
                 // start would drag the ending position down with it.
                 finalMoveUp += vh * 0.40;
             } else {
-                finalMoveUp += vh * 0.60;
+                // 0.65 = the 0.60 that set this end point, plus the 0.05 baseOffset just
+                // lifted him by. Without that correction, raising his starting position
+                // would drag the ending position up with it.
+                finalMoveUp += vh * 0.65;
             }
 
             // Reaches full size by 30% of the hero scroll (was 58.5%), and the rise runs on
