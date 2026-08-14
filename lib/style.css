@@ -767,9 +767,10 @@ box-sizing: border-box;
     .c-loader { display:flex !important; position:fixed; width:100vw; height:100vh; min-height:100%; background-color:#000; flex-direction:column; justify-content:center; align-items:center; top:0; left:0; visibility:visible !important; overflow:hidden; opacity:1 !important; pointer-events:all; cursor:default; z-index:9999; transition: opacity 0.2s ease-out, background-color 0.2s ease-out; padding:0; margin:0; }
     .c-loader__mask { position:absolute; display:flex; justify-content:center; align-items:center; width:100vw; height:100vh; background:transparent; overflow:hidden; pointer-events:none; z-index:10000; padding:0; margin:0; }
     .c-loader__inner { padding:0; margin:0; }
-    /* 59.39vw = 15% smaller than the previous 69.87vw. Tracks the hero badge, which
-       dropped from 82.2% to 69.87% by the same 15%, so the preloader hands over at the
-       same size the page continues at. */
+    /* The hero badge is 59.39% of the viewport width to match this exactly, and its
+       load-in holds scale 1 on mobile, so the badge is one size from the preloader all
+       the way through to the loaded page. Unlike desktop, there is no growth to allow
+       for - change this and the three mobile widths in index.html together. */
     .c-loader__logo { width:59.39vw; max-width:none; padding:0; margin:0; }
     .c-loader__logo img { width:100%; height:auto; border:none; outline:none; margin:0; padding:0; }
     
@@ -1472,9 +1473,9 @@ body {
 @media (max-width: 860px) {
 
     .layer-logo {
-        /* 15% smaller than the previous 80%. JS overrides this on the first scroll
-           tick with 69.87%, so both paths carry the same reduction. */
-        width: 68%;
+        /* Matches the preloader badge (59.39vw) so the size never changes at the
+           handover. JS overrides this with the same 59.39% on the first scroll tick. */
+        width: 59.39%;
     }
 
     .layer-jimmy {

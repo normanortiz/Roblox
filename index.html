@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=83" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=84" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -412,9 +412,9 @@ window.addEventListener('load', function() {
             logo.style.transform = '';
             // Square badge: width doubles as height, so size it off the viewport height
             // to guarantee it fits vertically. The scroll handler refines this immediately.
-            // Mobile figures are 15% below the previous 0.4186 / 359 so this transient
-            // first paint matches the 69.87% the scroll handler settles on.
-            const logoWidth = Math.min(vh * (isMobile ? 0.3558 : 0.6877), isMobile ? 305 : 628);
+            // Mobile figures track the 59.39% resting width, so this transient
+            // first paint matches the 59.39% the scroll handler settles on.
+            const logoWidth = Math.min(vh * (isMobile ? 0.3024 : 0.6877), isMobile ? 259 : 628);
             logo.style.width = logoWidth + 'px';
             logo.style.maxWidth = logoWidth + 'px';
             // Centred, matching the intro and the scroll handler. Mobile sits 30px higher.
@@ -684,14 +684,18 @@ window.addEventListener('load', function() {
         if (!logo || logoIntroDone) return;
         const isMobile = window.innerWidth <= 860;
 
-        // Starting state: centred, full resting width but scaled to 85%.
+        /* Starting state: centred, full resting width, scaled down on desktop so the badge
+           grows into place. Mobile holds scale 1 throughout - its resting width already
+           equals the preloader badge, so the handover is a straight swap at one size
+           rather than a 17.6% growth away from the size the preloader ended on. */
+        const introFrom = isMobile ? 1 : 0.85;
         logo.style.transition = 'none';
         logo.style.position = 'fixed';
         logo.style.left = '50%';
         logo.style.top = isMobile ? 'calc(50vh - 30px)' : '50vh';
-        logo.style.width = isMobile ? '69.87%' : '44.85%';
+        logo.style.width = isMobile ? '59.39%' : '44.85%';
         logo.style.maxWidth = isMobile ? 'none' : '628px';
-        logo.style.transform = 'translate(-50%, -50%) scale(0.85)';
+        logo.style.transform = 'translate(-50%, -50%) scale(' + introFrom + ')';
         logo.style.opacity = '1';
         logo.style.zIndex = '8';   // below the figure, which renders on top
 
@@ -844,7 +848,7 @@ window.addEventListener('load', function() {
             // The logo is a square badge (1:1), so its width is also its height. It stays
             // horizontally centred at all times and simply travels straight up while fading
             // out - no move to the top-left corner, no shrink.
-            const initialWidth = isMobile ? '69.87%' : '44.85%';
+            const initialWidth = isMobile ? '59.39%' : '44.85%';
             const riseThreshold = isMobile ? 15 : 50;   // % of hero scrolled to complete the rise
             const riseDistance = isMobile ? 55 : 70;    // vh travelled upward over that range
             const minScale = 0.3;                       // size it shrinks to by the end of the rise
