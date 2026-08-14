@@ -1,0 +1,26 @@
+{
+  "name": "$100M Robux Sweepstake",
+  "short_name": "Robux Sweepstake",
+  "description": "Enter the $100M Robux Sweepstake.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00bce7",
+  "icons": [
+    {
+      "src": "/images/logos/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logos/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logos/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

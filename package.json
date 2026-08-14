@@ -1,0 +1,14 @@
+{
+  "name": "beast-games-2",
+  "version": "1.0.0",
+  "description": "$100M Robux Sweepstake - static marketing site",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "python3 -m http.server 8001",
+    "start": "python3 -m http.server 8001"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

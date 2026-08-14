@@ -1,0 +1,1475 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,500;0,600;0,800;1,300;1,500;1,900&display=swap');
+@import url('https://fonts.cdnfonts.com/css/monument-extended');
+
+/* The .woff2.html files in includes/fonts/ are HTML documents, not fonts - an artifact of
+   how the original site was archived. Listing them made every browser download 52KB apiece,
+   fail to decode them, then fall back to the .woff. Only the valid .woff files are declared. */
+@font-face {
+    font-family: 'futurablack';
+    src: url('../includes/fonts/futura_extra_black_font-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'futuralight';
+    src: url('../includes/fonts/futura_light_bt-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+@font-face {
+    font-family: 'futuramedium';
+    src: url('../includes/fonts/futura_medium_bt-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* { -webkit-font-smoothing:antialiased; -moz-font-smoothing:antialiased; font-smoothing:antialiased;
+-ms-text-size-adjust:100%; -webkit-text-size-adjust:100%;
+text-rendering:optimizeLegibility !important; }
+
+* { margin:0; padding:0; border:0; }
+html, body { width:100%; height:100vh; margin:0; top:0; padding:0; font-family:'Montserrat', sans-serif; font-size:1em !important; font-weight:300; line-height:1.6em; letter-spacing:0em; }
+
+body { width:100%; height:100vh; margin:0; top:0 !important; overflow:hidden;
+
+--primary-color: #00bce7;
+--secondary-color: #E64783;
+
+--color-text: #191919;
+--color-text-white: #fff;
+--color-text-lightgrey: #f3f3f3;
+--color-text-grey: #666;
+--color-text-coloured: var(--primary-color);
+    
+--color-bg: #f3f3f3;
+--color-bg-dark: #000000;
+--color-bg-alert: var(--primary-color);
+--color-bg-overlay: var(--primary-color);
+--color-bg-loader: var(--primary-color);
+--color-bg-coloured: var(--primary-color);
+    
+--color-link: #191919;
+--color-link-white: #fff;
+--color-link-hover: var(--primary-color);
+--color-link-alt-hover: var(--primary-color);
+    
+--color-menu: #191919;
+--color-menu-hover: var(--primary-color);
+--color-menu-current: var(--primary-color);
+--color-menu-white: #fff;
+    
+--color-menuoverlay: #f3f3f3;
+--color-menuoverlay-hover: #191919;
+--color-menuoverlay-current: #191919;
+
+--color-footer: #f3f3f3;
+--color-footer-hover: var(--primary-color);
+    
+color: var(--color-text);
+background-color: var(--color-bg);
+	
+-ms-overflow-x: hidden;
+    overflow-x: hidden;
+    
+-webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;
+
+-webkit-font-smoothing:antialiased;
+-moz-font-smoothing:antialiased;
+-o-font-smoothing:antialiased;
+-ms-font-smoothing:antialiased;
+font-smoothing:antialiased;
+
+text-rendering:optimizeLegibility !important;
+
+-webkit-font-smoothing:subpixel-antialiased;
+-moz-font-smoothing:subpixel-antialiased;
+-o-font-smoothing:subpixel-antialiased;
+-ms-font-smoothing:subpixel-antialiased;
+font-smoothing:subpixel-antialiased;
+    
+-webkit-font-smoothing:antialiased; -moz-font-smoothing:antialiased; font-smoothing:antialiased;
+-ms-text-size-adjust:100%; -webkit-text-size-adjust:100%;
+text-rendering:optimizeLegibility !important;
+	
+-moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background:var(--color-text); color:var(--color-bg); text-shadow: none; /* Safari */	}
+::-moz-selection { background:var(--color-text); color:var(--color-bg); text-shadow: none; /* Firefox */ }
+
+img { -ms-interpolation-mode:bicubic; vertical-align:middle; }
+svg:not(:root) { overflow:hidden; }
+a, img { border:0; text-decoration:none; outline:none; }
+
+@keyframes reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes revealBack {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes revealTop {
+  from {
+    clip-path: inset(0 0 100% 0); opacity:0;
+  }
+  to {
+    clip-path: inset(0 0 0 0); opacity:1;
+  }
+}
+
+.noScroll { overflow:hidden; }
+.noVertScroll { overflow-y:hidden; }
+
+@keyframes cookiesBounce {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(-10px);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(5px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Bouncy downward animation for cookies popup */
+@keyframes bounceDown {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    20% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(150%);
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes bounceDown {
+    0% {
+        -webkit-transform: translateY(0);
+        opacity: 1;
+    }
+    20% {
+        -webkit-transform: translateY(-10px);
+    }
+    100% {
+        -webkit-transform: translateY(150%);
+        opacity: 0;
+    }
+}
+
+/* WARNING */
+.warning {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: url(../images/warning.jpg) center center; background-size: cover;
+  z-index: 100;
+  display: none;
+}
+
+/* PRELOADER - DISABLED (Hidden by default - remove display:none to enable loader) */
+.c-loader,
+#c-loader {
+    display:flex !important;
+    position:fixed;
+    width:100vw;
+    height:100vh;
+    min-height:100%;
+    background-color:#000;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    top:0;
+    left:0;
+    visibility:visible !important;
+    overflow:hidden;
+    opacity:1 !important;
+    pointer-events:all;
+    cursor:default;
+    z-index:9999;
+    transition: opacity 0.2s ease-out, background-color 0.2s ease-out;
+}
+.c-loader__mask {
+    position:absolute;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100vw;
+    height:100vh;
+    background:transparent;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:10000;
+    padding:0;
+    margin:0;
+}
+.c-loader__inner {
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    height:100%;
+    background-color:transparent;
+    pointer-events:none;
+    padding:0;
+    margin:0;
+}
+.c-loader__logo {
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    /* Matches the in-page hero logo exactly (JS grows it to 44.85% of viewport width, capped
+       at 628px, during the intro; this is the 15%-smaller starting size) so the badge does not change size when the preloader hands over. */
+    width:38.12vw;
+    max-width:534px;
+    height:auto;
+    /* Vertically centred - the hero logo starts centred too, so the handover is seamless. */
+    animation: logoPulse 2s ease-in-out infinite;
+    padding:0;
+    margin:0;
+}
+.c-loader__logo img { width:100%; height:auto; border:none; outline:none; margin:0; padding:0; }
+
+/* Pulses opacity only. It used to scale 0.9 -> 1.0, which meant the badge was almost
+   never the same size as the in-page logo at the moment the preloader handed over. */
+@keyframes logoPulse {
+    0%, 100% {
+        opacity: 0.75;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Divider line between hero and homepage */
+.hero-homepage-divider {
+    width: 100%;
+    height: 4px;
+    background-color: #000;
+    position: relative;
+    top: 1px;
+    z-index: 50;
+}
+
+/*! locomotive-scroll v3.5.4 | MIT License | https://github.com/locomotivemtl/locomotive-scroll */
+html.has-scroll-smooth { overflow: hidden; }
+html.has-scroll-dragging { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+.has-scroll-smooth body { overflow: hidden; }
+.has-scroll-smooth [data-scroll-container] { min-height: 100vh; }
+
+/* SCROLLBARS */
+.c-scrollbar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 11px;
+    height: 100vh;
+    transform-origin: center right;
+    transition: transform 0.3s, opacity 0.3s;
+    opacity: 0;
+}
+.c-scrollbar:hover {
+    transform: scaleX(1.45);
+}
+.c-scrollbar:hover, .has-scroll-scrolling .c-scrollbar, .has-scroll-dragging .c-scrollbar {
+    opacity: 1;
+}
+
+.c-scrollbar_thumb {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: black;
+    opacity: 0.5;
+    width: 7px;
+    border-radius: 10px;
+    margin: 2px;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+.has-scroll-dragging .c-scrollbar_thumb {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+
+/* BACK TO TOP */
+#back-to-top { position:fixed; font-size:1.2em; bottom:60px; right:60px; width:60px; height:60px; text-align:center; line-height:58px; background:transparent; color:var(--color-text-coloured); cursor:pointer; text-decoration:none; opacity:0; visibility:hidden; z-index:10019; border:4px solid var(--color-text-coloured); -webkit-font-smoothing: antialiased;
+    
+-webkit-border-radius:50%; -moz-border-radius:50%; border-radius:50%;
+
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+#back-to-top:hover { background:transparent; border:4px solid var(--color-text); color:var(--color-text);
+
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+#back-to-top.show { visibility:visible; opacity:1; }
+
+@keyframes blinker {
+  50% {
+    opacity: .5;
+  }
+}
+.overlay-open { opacity:1; visibility:visible;
+    
+-webkit-transition: all 1200ms cubic-bezier(.9,0,.1,1);
+-moz-transition: all 1200ms cubic-bezier(.9,0,.1,1);
+-o-transition: all 1200ms cubic-bezier(.9,0,.1,1);
+transition: all 1200ms cubic-bezier(.9,0,.1,1);
+}
+
+.current { color:var(--color-menuoverlay-current);
+    
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+/* SLIDES */
+.section { position:relative; width:100%; height:auto; top:0; padding:0; text-align:center; }
+
+main { position:relative; }
+
+/* SECTION */
+#homepage { width:100%; height:auto; min-height:50vh; max-height:100vh; top:0; margin:0 auto; overflow:hidden; background-color:var(--color-bg); position:relative; }
+#claim { display:none; width:100%; height:100vh; top:0; margin:0 auto; padding:0; background-color:var(--color-bg-dark); }
+#about { width:100%; height:auto; top:0; margin:0 auto; padding:150px 0; background-color:var(--color-bg); overflow:visible; }
+#video { width:80%; height:480px; height:auto; margin:0 auto 80px auto; padding:0; background-color:var(--color-bg); }
+#goals { display:flex; align-items:center; width:100%; height:auto; padding:0; margin:80px auto; overflow:visible; background-color:var(--color-bg); }
+#live { width:100%; height:auto; top:0; margin:0 auto; padding:120px 0; background-color:var(--color-bg); }
+#crewdiv { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; background-color:var(--color-bg-dark); }
+#players { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; background-color:var(--color-bg); }
+#events { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; background-color:var(--color-bg); }
+#crewdiv { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; background-color:var(--color-bg); }
+#artdirector { width:100%; height:auto; top:0; margin:0 auto; padding:140px 0 50px 0; overflow:hidden; background-color:var(--color-bg-dark); }
+#how { width:100%; min-height:100vh; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; background-color:var(--color-bg); }
+#news { width:100%; height:auto; top:0; margin:80px auto; padding:150px 0; background-color:var(--color-bg-dark); }
+#participate { width:80%; height:480px; height:auto; padding:0; margin:160px auto 120px auto; background-color:var(--color-bg); }
+#reviews { width:100%; height:auto; top:0; margin:80px auto 0 auto; padding:120px 0 80px 0; background-color:var(--color-bg-dark);
+
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+-o-box-sizing: border-box;
+box-sizing: border-box;
+}
+
+/* COMMON */
+.center { text-align:center; }
+.light { font-family:'futuralight'; }
+.medium { font-family:'futuramedium'; }
+.strong { font-family:'futurablack'; }
+strong, b { font-weight:800; }
+.italic { font-style:italic; }
+.alternative { color:var(--color-text-coloured); }
+.bigger { font-size:1.2em; }
+
+.clipPath { clip-path:inset(0 0 0 100%); }
+.clipPathTop { clip-path:inset(0 0 100% 0); }
+
+.showItem { clip-path:inset(0 100% 0 0); animation: reveal 1s forwards .2s; }
+.showItemTop { clip-path:inset(0 0 100% 0); animation: revealTop 1s forwards .2s; }
+
+.bwFilter {
+	
+filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale"); /* Firefox 3.5+ */
+filter: gray; /* IE6-9 */
+-webkit-filter: grayscale(100%); /* Chrome 19+ & Safari 6+ */
+    
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+.scroll-container { top:0; }
+
+/* HOMEPAGE */
+.container { position:relative; width:70%; height:auto; margin:0 auto; padding:0; top:50%; overflow:hidden; z-index:24;
+
+font-family: 'futuralight'; font-size:3.4em; font-weight:300; color:var(--color-text-white); line-height:1em; text-align:center; text-transform:uppercase;
+-webkit-font-smoothing: antialiased;
+
+-moz-transform: translateY(-50%);
+-ms-transform: translateY(-50%);
+-webkit-transform: translateY(-50%);
+transform: translateY(-50%);
+}
+
+.container img { width:60%; }
+
+.container .div#line1,
+.container .div#line2 { display:none; }
+
+.container .sentence { min-height:100px; height:auto; }
+
+.container #countdown { display:none; margin:40px 0 0 0; }
+.container #countdown ul { display:flex; justify-content:center; align-items:center; gap:80px; }
+.container #countdown li { font-family:'futuralight'; display:inline-block; font-size:.4em; list-style-type:none; padding:0; text-transform:uppercase; color:#fec455; }
+.container #countdown li span { font-family:'futurablack'; display:block; font-size:4em; }
+
+/* Scroll down circle 
+====================== */
+.scroll-down-circle { position:absolute; display:block;	bottom:-20px; width:200px; height:200px; left:50%; margin:0 0 0 -100px; opacity:1; visibility:inherit; cursor:none; z-index:23; }
+
+/* Scroll down circle icon */
+.scroll-down-circle .sdc-icon { position:absolute; display:block; left:50%;	top:50%; font-size:16px; color:var(--color-text-white); transform: translate(-50%, -50%); -webkit-font-smoothing: antialiased; }
+
+/* Scroll down circle svg */
+.scroll-down-circle svg { width:100%; animation:sdc-rotation 8s infinite linear; }
+.scroll-down-circle rect { fill:var(--color-text-white); }
+.scroll-down-circle text { font-size:1.5em;	font-weight:400; text-transform:uppercase; letter-spacing:30px; fill:var(--color-text-white); transition:fill .2s; -webkit-font-smoothing: antialiased; }
+.scroll-down-circle:hover text { fill:var(--color-text-white); }
+
+/* Scroll down circle animation */
+@keyframes sdc-rotation {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-360deg);
+	}
+}
+
+.overlay { position:absolute; width:100%; height:100%; top:0; left:0; background:rgba(0, 0, 0, .3); z-index:22; }
+
+/* #bgVideo is a YouTube iframe, so object-fit does not apply. Instead the frame is sized
+   to 16:9 and over-scaled on whichever axis is limiting, then centred - the min-width /
+   min-height pair reproduces a cover fit. #homepage is 100vh here, so vh units are exact;
+   the 860px breakpoint halves them because the section drops to 50vh there. */
+.bgvideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 56.25vw;        /* 100 / (16/9) */
+    min-width: 177.78vh;    /* 100 * (16/9) */
+    min-height: 100vh;
+    border: 0;
+    pointer-events: none;   /* never let the embed swallow scroll */
+    z-index: 21;
+}
+
+.video-responsive {
+    position:absolute;
+    display:block;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+	z-index:21;
+}
+
+/* CLAIM */
+.claimContainer { width:100%; height:100vh; display:flex; justify-content:center; align-items:center; }
+.aboutTxt { width:100%; font-size:1em; line-height:2em; color:var(--color-text); text-align:center; margin:0 auto; -webkit-font-smoothing: antialiased; }
+
+/* BTS SECTION */
+#BTS {
+    background-color: var(--color-bg-dark);
+    padding-top: 150px;
+    padding-bottom: 150px;
+}
+
+/* GOALS */
+.goalsContainer { display:flex; flex-direction:row; align-items:center; justify-content:center; width:80%; height:auto; margin:0 auto; padding-top:100px; overflow:visible; }
+
+.itemGoal {
+    width:33.333333%;
+    align-self:center;
+    padding-top: 40px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: visible;
+}
+
+.itemGoal.showItem {
+    opacity: 1;
+    transform: translateY(0);
+}
+.itemGoalTitle { font-family:'futurablack'; font-size:5.5em; font-weight:900; text-transform:uppercase; margin-bottom:40px; color: var(--secondary-color) !important; background-color: transparent;
+}
+
+.itemGoalTitle span,
+.shuffle-text {
+    color: inherit !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Make the + sign 3x larger in +$10M - desktop */
+.itemGoalTitle .plus-sign {
+    font-size: 0.9em !important;
+    /* vertical-align: super; */
+}
+
+.itemGoalDesc {
+    font-family: 'futuralight';
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: .55em;
+    margin-left: 15px;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* DJS DIV */
+.crewdivWrapper { width:100%; height:10vh; display:flex; justify-content:center; align-items:center; }
+.crewdivContainer { width:100%; }
+.crewdivBg { height:100%; background-repeat:no-repeat; background-position:center; background-size:cover; background-attachment:fixed; }
+.crewdivBg img { width:100%; object-fit:cover; }
+
+.crewdivTxtContainer { position:absolute; width:80%; top:50%; left:50%; z-index:22;
+    
+-moz-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+}
+
+.crewdivTxt { display:inline; font-family:'futurablack'; font-size:3em; line-height:1.3em; color:var(--color-text-white); padding:0 10px; text-transform:uppercase;
+
+background: var(--color-bg-coloured) none repeat scroll 0 0;
+box-decoration-break: clone;
+-webkit-box-decoration-break: clone;
+
+-webkit-font-smoothing: antialiased;
+}
+
+.crewdivTxt img { width:260px; }
+
+/* DJS */
+.playersContainer { padding-top:40px; width:80%; height:100%; margin:80px auto 0 auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:40; }
+
+.djsInfo { /*word-wrap:break-word;*/ text-align:center; }
+
+.djsName { font-family:'futurablack'; font-size:2em; letter-spacing:-.02em; line-height:.9em; color:var(--primary-color); text-transform:uppercase; text-align:center;
+-webkit-font-smoothing: antialiased;
+}
+.djsImg { position:relative; width:240px; height:240px; margin:0 auto 40px auto; overflow:hidden;
+border-radius:50%; -moz-border-radius:50%; -webkit-border-radius:50%;
+}
+.djsImg img { position:absolute; width:100%; height:100%; object-fit:cover; top:50%; left:50%;
+
+-moz-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+}
+
+.djsSocial { display:flex; justify-content:center; align-items:center; gap:20px; margin:20px 0 0 0; }
+.djsIG a,
+.djsSC a { font-size:1.3em; color:var(--color-text);
+-webkit-font-smoothing: antialiased;
+    
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+.djsIG a:hover,
+.djsSC a:hover { color:var(--color-text-coloured);
+    
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+.djsVotes { position:absolute; display:flex; justify-content:center; align-items:center; width:80px; height:80px; top:160px; font-family:'futurablack'; font-size:1.2em; letter-spacing:-.02em; line-height:.9em; color:var(--color-text-white); text-transform:uppercase; text-align:center; background:var(--color-bg-coloured); z-index:30;
+    
+border-radius:50%; -moz-border-radius:50%; -webkit-border-radius:50%;
+
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+.djsBtn { display:inline-block; margin:30px auto 20px auto; padding:15px 30px; border:1px solid var(--color-text-coloured);
+border-radius:6px; -moz-border-radius:6px; -webkit-border-radius:6px;
+}
+
+a .djsBtn { font-size:.8em; font-weight:700; line-height:1em; text-transform:uppercase; color:var(--color-text-coloured); background:transparent; border:1px solid var(--color-text-coloured); -webkit-font-smoothing: antialiased;
+
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+a .djsBtn:hover { color:var(--color-text-white); background:var(--color-text-coloured);
+
+-webkit-transition: all 0.4s ease-out;
+-moz-transition: all 0.4s ease-out;
+-ms-transition: all 0.4s ease-out;
+-o-transition: all 0.4s ease-out;
+transition: all 0.4s ease-out;
+}
+
+.djsInfo:nth-child(1n) .djsImg { box-shadow: .5rem .5rem var(--color-text-coloured); }
+.djsInfo:nth-child(2n) .djsImg { box-shadow: -.4rem -.4rem var(--color-text-coloured); }
+.djsInfo:nth-child(3n) .djsImg { box-shadow: -.4rem .4rem var(--color-text-coloured); }
+.djsInfo:nth-child(4n) .djsImg { box-shadow: .4rem -.4rem var(--color-text-coloured); }
+
+/* EVENTS */
+.eventsContainer { width:90%; height:100%; margin:80px auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:40; }
+
+.eventInfo { width:240px; /*word-wrap:break-word;*/ text-align:center; }
+
+.eventTitle { font-family:'futurablack'; font-size:2em; letter-spacing:-.02em; line-height:.9em; color:var(--primary-color); text-transform:uppercase; text-align:left;
+-webkit-font-smoothing: antialiased;
+}
+.eventDate { font-size:1.3em; color:var(--color-text); margin-top:20px; text-transform:uppercase; text-align:left;
+-webkit-font-smoothing: antialiased;
+}
+.eventLocation { font-size:1em; color:var(--color-text); margin-top:0; text-align:left;
+-webkit-font-smoothing: antialiased;
+}
+
+.eventImg { position:relative; width:240px; height:340px; margin:0 auto 40px auto; overflow:hidden;
+}
+.eventImg img { position:relative; object-fit:cover; top:50%; left:50%; width:240px; height:340px;
+
+-moz-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+}
+
+.eventInfo:nth-child(1n) .eventImg { box-shadow: 0.5rem 0.5rem var(--color-text-coloured); }
+.eventInfo:nth-child(2n) .eventImg { box-shadow: -0.5rem -0.5rem var(--color-text-coloured); }
+.eventInfo:nth-child(3n) .eventImg { box-shadow: -0.5rem 0.5rem var(--color-text-coloured); }
+.eventInfo:nth-child(4n) .eventImg { box-shadow: 0.5rem -0.5rem var(--color-text-coloured); }
+
+/* MARQUEE */
+.marquee { display:block; margin:0 auto; text-align: center; }
+.marquee .marquee-content { font-family:'futuralight'; font-weight:800; font-size:12em; line-height:2.4em; color:var(--color-text); text-transform:uppercase;
+-webkit-font-smoothing: antialiased;
+}
+.marquee .stroke-black {
+	color: transparent;
+	-webkit-text-stroke: 1px;
+	-webkit-text-stroke-color: var(--color-text);
+}
+
+/* CREW DIV */
+.crewdivContainer { width:100%; display:flex; justify-content:center; align-items:center; }
+
+.crewdivTxtContainer { position:absolute; width:80%; top:50%; left:50%; z-index:22;
+    
+-moz-transform: translate(-50%, -50%);
+-ms-transform: translate(-50%, -50%);
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+}
+
+.crewdivTxt { display:inline; font-family:'futurablack'; font-size:3em; line-height:1.3em; color:var(--color-text-white); padding:0 10px; text-transform:uppercase;
+
+background: var(--color-bg-coloured) none repeat scroll 0 0;
+box-decoration-break: clone;
+-webkit-box-decoration-break: clone;
+
+-webkit-font-smoothing: antialiased;
+}
+
+.crewdivBg { width:100%; height:auto; }
+.crewdivBg img { width:100%; height:auto; object-fit:cover; }
+
+/* HOW */
+.howContainer { width:100%; height:100%; margin:80px auto; display:flex; flex-direction:row; justify-content:center; align-items:center; gap:0; }
+.howClmn { width:50%; padding:120px;
+
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+-o-box-sizing: border-box;
+box-sizing: border-box;
+}
+
+.howClmn:nth-child(2) { width:50%; display:flex; justify-content:center; align-items:center; overflow:hidden; z-index:21; }
+.ruleBGTitle { position:absolute; font-family:'futuralight'; font-size:3em; letter-spacing:-.02em; line-height:.9em; color:var(--color-text-white); text-transform:uppercase; text-align:center; z-index:22;
+
+-webkit-font-smoothing: antialiased;
+}
+.howClmn:nth-child(2) img { height:100%; object-fit:cover; }
+
+.ruleBG { width:100%; height:100%; overflow:hidden; }
+
+.howRule { margin:0 0 60px 0; }
+.howRule:last-child { margin:0; }
+
+.ruleNr { position:absolute; font-size:.8em; color:var(--color-text); margin:-20px 0 0 -20px; text-align:center;
+
+-webkit-font-smoothing: antialiased;
+}
+.ruleTitle { font-family:'futurablack'; font-size:3em; letter-spacing:-.02em; line-height:.9em; color:var(--color-text-coloured); text-transform:uppercase; text-align:left;
+
+-webkit-font-smoothing: antialiased;
+}
+.ruleDesc { font-size:1em; color:var(--color-text); margin-top:10px; text-align:left;
+
+-webkit-font-smoothing: antialiased;
+}
+
+/* Mobile */
+@media all and (max-width: 860px) {
+    
+    /* PRELOADER */
+    .c-loader { display:flex !important; position:fixed; width:100vw; height:100vh; min-height:100%; background-color:#000; flex-direction:column; justify-content:center; align-items:center; top:0; left:0; visibility:visible !important; overflow:hidden; opacity:1 !important; pointer-events:all; cursor:default; z-index:9999; transition: opacity 0.2s ease-out, background-color 0.2s ease-out; padding:0; margin:0; }
+    .c-loader__mask { position:absolute; display:flex; justify-content:center; align-items:center; width:100vw; height:100vh; background:transparent; overflow:hidden; pointer-events:none; z-index:10000; padding:0; margin:0; }
+    .c-loader__inner { padding:0; margin:0; }
+    .c-loader__logo { width:69.87vw; max-width:none; padding:0; margin:0; }
+    .c-loader__logo img { width:100%; height:auto; border:none; outline:none; margin:0; padding:0; }
+    
+    /* BODY */
+    /*body { width:100%; height:100vh; min-height:100vh; margin:0; top:0px !important; overflow:auto; }*/
+    #homepage { width:100%; height:50vh !important; min-height:50vh !important; top:0; margin:0 auto; overflow:hidden; }
+
+    /* #homepage is 50vh on mobile, so the cover minimums halve to match. */
+    .bgvideo { min-width:88.89vh; min-height:50vh; }
+
+    /* Mobile bgvideo - removed, using base .bgvideo rule instead */
+    #claim { display:none; width:100%; height:100vh; top:0; margin:0 auto; padding:0; background:var(--color-bg-dark); }
+    #about { width:100%; height:auto; top:0; margin:0 auto; padding:150px 0; background:var(--color-bg); overflow:visible; }
+    #video { width:100%; height:540px; height:auto; margin:0 auto 80px auto; padding:0; }
+    #goals { display:flex; align-items:center; width:100%; height:auto; padding:0; margin:80px auto; overflow:visible; }
+    #live { width:100%; height:auto; top:0; margin:0 auto; padding:40px 0; background:var(--color-bg); }
+    #crewdiv { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; }
+    #players { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; }
+    #events { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; }
+    #crewdiv { width:100%; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; }
+    #artdirector { width:100%; height:auto; top:0; margin:0 auto; padding:80px 0 20px 0; overflow:hidden; background-color:var(--color-bg-dark); }
+    #how { width:100%; min-height:100vh; height:auto; top:0; margin:0 auto; padding:0; overflow:hidden; }
+    #news { width:100%; height:auto; top:0; margin:80px auto 0 auto; padding:150px 0; background:var(--color-bg-dark); }
+    #participate { width:100%; height:540px; height:auto; padding:0; margin:0 auto 80px auto; }
+    #reviews { width:100%; height:auto; top:0; margin:80px auto 0 auto; padding:120px 0 80px 0; background:var(--color-bg-dark); }
+        
+    /* BACK TO TOP */
+    #back-to-top { bottom:5%; right:10%; }
+        	
+	/* HOMEPAGE */
+    .container { position:relative; width:80%; height:auto; margin:0 auto; padding:0; top:50%; overflow:hidden; z-index:24;
+
+    font-family: 'futuralight'; font-size:2.4em; font-weight:300; color:var(--color-text-white); line-height:1em; text-align:center; text-transform:uppercase;
+    -webkit-font-smoothing: antialiased;
+
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    }
+
+    .container img { width:100%; }
+
+    .container .div#line1,
+    .container .div#line2 { display:none; }
+
+    .container .sentence { min-height:100px; height:auto; }
+    .container #countdown { display:none; margin:40px 0 0 0; }
+    .container #countdown ul { display:flex; justify-content:center; align-items:center; gap:20px; }
+    .container #countdown li { font-family:'futuralight'; display:inline-block; font-size:.3em; list-style-type:none; padding:0; text-transform:uppercase; color:var(--primary-color); }
+    .container #countdown li span { font-family:'futurablack'; display:block; font-size:3.4em; }
+    
+    .scroll-down-circle { bottom:0px; width:160px; height:160px; left:50%; margin:0 0 0 -80px; }
+    
+    /* Scroll down circle icon */
+    .scroll-down-circle .sdc-icon { font-size:18px; }
+
+    /* Scroll down circle svg */
+    .scroll-down-circle text { font-size:1.8em;	letter-spacing:30px; }
+
+    /* CLAIM */
+    .claimContainer { width:100%; height:100vh; display:flex; justify-content:center; align-items:center; }
+    .aboutTxt { width:100%; font-size:1em; line-height:1.6em; color:var(--color-text); text-align:center; margin:0 auto; -webkit-font-smoothing: antialiased; }
+    
+    /* GOALS */
+    .goalsContainer { display:flex; flex-direction:column; align-items:center; justify-content:center; width:80%; height:auto; margin:40px auto 0 auto; overflow:visible; }
+
+    .itemGoal {
+        width:100%;
+        height:auto;
+        margin-bottom:60px;
+        padding-top: 40px;
+        align-self:center;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: bold;
+        overflow: visible;
+    }
+
+    .itemGoal.showItem {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Move +$10M left by 20px on mobile */
+    .itemGoal:nth-child(3) {
+        margin-left: -20px;
+    }
+    .itemGoalTitle { font-family:'futurablack'; font-size:5em; font-weight:900; text-transform:uppercase; margin-bottom:0px; color: var(--secondary-color) !important; background-color: transparent; line-height:1.1em;
+}
+    .itemGoalTitle span {
+        color: inherit !important;
+
+    -webkit-font-smoothing: antialiased
+    }
+
+    /* Make the + sign 3x larger in +$10M - mobile */
+    .itemGoalTitle .plus-sign {
+        font-size: 0.6em !important;
+        /* vertical-align: super; */
+    }
+
+    .itemGoalDesc { font-family: 'futuralight'; font-size:.8em; font-weight:bold; letter-spacing:0.8em; margin-left:15px; color:var(--secondary-color); text-transform:uppercase; -webkit-font-smoothing: antialiased }
+    
+    /* DJS DIV */
+    .crewdivWrapper { width:100%; height:10vh; display:flex; justify-content:center; align-items:center; }
+    .crewdivContainer { width:100%; }
+    .crewdivBg { width:100%; height:100%; background-repeat:no-repeat; background-position:center; background-size:cover; background-attachment:fixed; }
+    .crewdivBg img { width:100%; height:100%; object-fit:cover; }
+    
+    .crewdivTxtContainer { position:absolute; width:80%; top:50%; left:50%; z-index:22; }
+    .crewdivTxt { display:inline; font-family:'futurablack'; font-size:2.4em; line-height:1.3em; color:var(--color-text-white); padding:0 10px; text-transform:uppercase;
+
+    background: var(--color-bg-coloured) none repeat scroll 0 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+
+    -webkit-font-smoothing: antialiased;
+    }
+
+    .crewdivTxt img { width:260px; }
+    
+    /* DJS */
+    .playersContainer { padding-top:40px; width:80%; height:100%; margin:120px auto 0 auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:40; }
+    .djsInfo { text-align:center; margin:0 0 40px 0; }
+
+    .djsName { font-family:'futurablack'; font-size:2em; letter-spacing:-.02em; line-height:.9em; color:var(--primary-color); text-transform:uppercase; text-align:center;
+    -webkit-font-smoothing: antialiased;
+    }
+    .djsImg { position:relative; width:240px; height:240px; margin:0 auto 40px auto; overflow:hidden;
+    border-radius:50%; -moz-border-radius:50%; -webkit-border-radius:50%;
+    }
+    .djsImg img { position:absolute; object-fit:cover; top:50%; left:50%;
+
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    }
+
+    .djsSocial { display:flex; justify-content:center; align-items:center; gap:20px; margin:20px 0 0 0; }
+    .djsIG a,
+    .djsSC a { font-size:1.3em; color:var(--color-text); }
+    
+    /* EVENTS */
+    .eventsContainer { width:100%; height:100%; margin:80px auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:40; }
+
+    .eventInfo { width:240px; text-align:center; margin:0 0 40px 0; }
+    .eventInfo:last-child { width:240px; text-align:center; margin:0; }
+
+    .eventTitle { font-family:'futurablack'; font-size:2em; letter-spacing:-.02em; line-height:.9em; color:var(--primary-color); text-transform:uppercase; text-align:left;
+    -webkit-font-smoothing: antialiased;
+    }
+    .eventDate { font-size:1.3em; color:var(--color-text); margin-top:20px; text-transform:uppercase; text-align:left;
+    -webkit-font-smoothing: antialiased;
+    }
+    .eventLocation { font-size:1em; color:var(--color-text); margin-top:0; text-align:left;
+    -webkit-font-smoothing: antialiased;
+    }
+
+    .eventImg { position:relative; width:240px; height:300px; margin:0 auto 40px auto; overflow:hidden;
+    }
+    .eventImg img { position:absolute; object-fit:cover; top:50%; left:50%; }
+    
+    /* CREW DIV */
+    .crewdivContainer { width:100%; display:flex; justify-content:center; align-items:center; }
+    .crewdivTxtContainer { position:absolute; width:80%; top:50%; left:50%; z-index:22; }
+
+    .crewdivTxt { display:inline; font-family:'futurablack'; font-size:2.4em; line-height:1.3em; color:var(--color-text-white); padding:0 10px; text-transform:uppercase;
+
+    background: var(--color-bg-coloured) none repeat scroll 0 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+
+    -webkit-font-smoothing: antialiased;
+    }
+
+    .crewdivBg {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+
+    .crewdivBg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      display: block;
+    }
+    
+    /* HOW */
+    .howContainer { width:100%; height:100%; margin:80px auto; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:0; }
+    .howClmn { width:50%; padding:0; }
+    
+    .howClmn:nth-child(1) { width:100%; padding:120px 40px 40px 40px; order:2;
+    
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    }
+    .howClmn:nth-child(2) { order:1; }
+
+    .howClmn:nth-child(2) { width:100%; display:flex; justify-content:center; align-items:center; overflow:hidden; z-index:21; }
+    .ruleBGTitle { position:absolute; font-family:'futuralight'; font-size:2.4em; letter-spacing:-.02em; line-height:.9em; color:var(--color-text-white); text-transform:uppercase; text-align:center; z-index:22;
+
+    -webkit-font-smoothing: antialiased;
+    }
+    .howClmn:nth-child(2) img { height:100%; object-fit:cover; }
+
+    .ruleBG { width:100%; height:100%; overflow:hidden; }
+
+    .howRule { margin:0 0 80px 0; }
+    .howRule:last-child { margin:0; }
+
+    .ruleNr { position:absolute; font-size:.8em; color:var(--color-text); margin:-20px 0 0 -20px; text-align:center;
+
+    -webkit-font-smoothing: antialiased;
+    }
+    .ruleTitle { font-family:'futurablack'; font-size:2.4em; letter-spacing:-.02em; line-height:.9em; color:var(--color-text-coloured); text-transform:uppercase; text-align:left;
+
+    -webkit-font-smoothing: antialiased;
+    }
+    .ruleDesc { font-size:1em; color:var(--color-text); margin-top:10px; text-align:left;
+
+    -webkit-font-smoothing: antialiased;
+    }
+
+}
+
+/* RESPONSIVE */
+@media all and (max-width: 860px) and (orientation: landscape) {
+    
+    .warning { display: block !important; }
+    
+}
+
+/* ========================================================================
+   VIDEO FIX - REMOVED - Use proper CSS cascade instead of !important
+   ======================================================================== */
+
+/* Desktop-specific adjustments for homepage video */
+@media (min-width: 1024px) {
+    #homepage {
+        height: auto !important;
+        min-height: 800px !important;
+        max-height: 100vh !important;
+    }
+
+    #homepage .video-responsive {
+        width: 100% !important;
+    }
+
+    /* Removed bgvideo width override - base .bgvideo rule with object-fit: cover handles sizing */
+}
+
+/* UTILITY CLASSES FOR INLINE STYLE REMOVAL */
+.video-responsive-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 19;
+}
+
+.section-hidden {
+    display: none;
+}
+
+/* ===== INDEX.HTML SPECIFIC STYLES ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== INDEX1.HTML SPECIFIC STYLES ===== */
+
+/* Hero Section */
+#hero {
+    position: relative;
+    width: 100%;
+    height: 150vh;
+    min-height: 150vh;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Homepage Video - Responsive based on aspect ratio */
+#homepage .video-responsive {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 21;
+}
+
+/* Aspect ratio responsive sizing for homepage video - REMOVED
+   The base .bgvideo rule with object-fit: cover handles all aspect ratios correctly.
+   These media queries were breaking centering by setting width/height to auto.
+*/
+
+:root {
+    --primary-color: #ffcc00;
+    --secondary-color: #00a8e8;
+}
+
+html.has-scroll-smooth {
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Monument Extended', sans-serif;
+    background: #000;
+    color: #fff;
+}
+
+[data-scroll-container] {
+    min-height: 100vh;
+}
+
+/* Preloader */
+/* Removed duplicate #c-loader rules - using main definition at line 247 */
+
+#c-loader.loaded {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transition: opacity 0.2s ease-out, visibility 0s 0.2s;
+}
+
+/* Persistent Logo - outside hero section, always above everything */
+.persistent-logo {
+    position: fixed;
+    top: 20px;
+    left: 40px;
+    /* Square badge, so 200px would be a 200px-tall corner mark. */
+    width: 100px;
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.persistent-logo.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.persistent-logo img {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Mobile persistent logo positioning */
+@media all and (max-width: 860px) {
+    .persistent-logo {
+        top: 40px;
+        left: 40px;
+        width: 140px;
+    }
+}
+
+/* Hero Section */
+#hero {
+    position: relative;
+    width: 100%;
+    height: 150vh;
+    min-height: 150vh;
+    overflow: hidden;
+    z-index: 1;
+    isolation: isolate;
+}
+
+.parallax-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Layer 1: Background - Furthest back */
+.layer-background {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    transform: translateX(-50%);
+    padding-bottom: 1px;
+}
+
+/* Anchored to the BOTTOM of the hero, always. Because .layer-background spans the full
+   hero, bottom:0 here is the hero's bottom edge - and that edge moves up as the page
+   scrolls, so the image tracks it for free with no compensating maths.
+   Only the height is animated (by the scroll handler); width:auto keeps the natural
+   aspect, so the image scales as one piece and the sides simply crop.
+   No object-fit: the element IS the picture, so it can never letterbox. */
+.layer-background img {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    height: 100%;
+    max-width: none;
+    /* Starts invisible against the black preloader and fades in once the page hands
+       over - see the .is-visible toggle in the load handler. */
+    opacity: 0;
+    transition: opacity 1.5s ease-out;
+}
+
+.layer-background img.is-visible {
+    opacity: 1;
+}
+
+/* Layer 2: Overlay - Over background - Frosted glass effect */
+.layer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Sits above the background (z-index 1) but below the logo, bills and figure, so it
+       darkens and blurs only the backdrop. The scroll handler fades this whole layer out
+       over the first 20% of the hero, which lifts the blur and the darkening together. */
+    background-color: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(11px);
+    -webkit-backdrop-filter: blur(11px);
+    z-index: 2;
+    will-change: opacity;
+}
+
+/* Layer 3: Logo - Starts fixed to viewport center, becomes top-left during scroll */
+.layer-logo {
+    position: fixed;
+    top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Square badge - width is also its height, so this is far smaller than the
+       60%/800px the old 2.64:1 wordmark used. JS overrides on first scroll tick. */
+    width: 47.84%;
+    max-width: 628px;
+    /* Below the figure (z-index 20) so he renders on top of the badge. */
+    z-index: 8;
+    will-change: transform, width, top, left;
+    pointer-events: none;
+}
+
+.layer-logo img {
+    pointer-events: auto;
+}
+
+.layer-logo img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Layer 4: Jimmy - Over logo initially */
+.layer-jimmy {
+    position: absolute;
+    z-index: 20;
+    will-change: transform;
+}
+
+.layer-jimmy img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Layer 5: Bill images - Over jimmy */
+/* SECOND BILL WAVE - enters from the top of the screen after 30% of the hero scroll.
+   Positioned at the hero top and driven entirely by transform in the scroll handler,
+   which offsets them by the scrolled distance so they appear to fall in from the
+   viewport edge rather than from a fixed point in the hero. */
+.bill-wave2 {
+    position: absolute;
+    top: 0;
+    z-index: 13;
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+.bill-wave2 img { width: 100%; height: auto; display: block; }
+
+#wbill1  { left: 4%;   width: 13vh; }
+#wbill2  { left: 15%;  width: 10vh; }
+#wbill3  { left: 26%;  width: 15vh; }
+#wbill4  { left: 38%;  width: 11vh; }
+#wbill5  { left: 49%;  width: 14vh; }
+#wbill6  { left: 60%;  width: 9.5vh; }
+#wbill7  { left: 70%;  width: 16vh; }
+#wbill8  { left: 80%;  width: 11.5vh; }
+#wbill9  { left: 89%;  width: 13.5vh; }
+#wbill10 { left: 33%;  width: 12vh; }
+
+@media all and (max-width: 860px) {
+    /* Thinner crowd on small screens */
+    #wbill3, #wbill6, #wbill9, #wbill10 { display: none; }
+}
+
+/* Confetti burst canvas - spans the full 150vh hero. z-index 12 keeps it above the
+   background, overlay, logo and bills but below the figure (z-index 20), so the burst
+   reads as coming from behind him. */
+#confetti-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 12;
+    pointer-events: none;
+}
+
+.layer-bill {
+    position: absolute;
+    z-index: 5;
+    will-change: transform;
+}
+
+/* Bills on right side and center should be above Jimmy */
+#bill2, #bill5, #bill7 {
+    z-index: 11;
+}
+
+/* Bill10 behind Jimmy but above overlay */
+#bill10 {
+    z-index: 5;
+}
+
+/* Bill11 should be behind Jimmy */
+#bill11 {
+    z-index: 4;
+}
+
+/* Bill13 should be behind all other bills but above overlay */
+#bill13 {
+    z-index: 3;
+}
+
+.layer-bill img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#bill1 {
+    width: 16.1vh; /* 2x */
+}
+
+#bill2 {
+    width: 14.375vh; /* 2x */
+    z-index: 6;
+}
+
+#bill3 {
+    width: 17.25vh; /* 2x */
+}
+
+#bill4 {
+    width: 15.525vh; /* 2x */
+}
+
+#bill5 {
+    width: 16.675vh; /* 2x */
+}
+
+#bill6 {
+    width: 14.95vh; /* 2x */
+}
+
+#bill7 {
+    width: 13.8vh; /* 2x */
+}
+
+#bill8 {
+    width: 17.825vh; /* 2x */
+}
+
+#bill9 {
+    width: 21.563vh; /* 2x of 9.375vh */
+}
+
+#bill10 {
+    width: 24.15vh; /* 2x of 10.5vh */
+}
+
+#bill11 {
+    width: 17.457vh; /* 2x of 7.59vh */
+}
+
+#bill12 {
+    width: 17.25vh; /* 2x */
+}
+
+#bill13 {
+    width: 26.737vh; /* 2x of 11.625vh */
+}
+
+/* Gradient at bottom of hero */
+.hero-gradient {
+    position: absolute;
+    /* Sits 3px lower than it used to (was -5px). More negative = further down. */
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
+    z-index: 15;
+    pointer-events: none;
+}
+
+/* Mobile gradient at bottom of hero - shorter */
+@media all and (max-width: 860px) {
+    .hero-gradient {
+        height: 100px;
+    }
+}
+
+/* Homepage Section - Above hero */
+#homepage {
+    position: relative;
+    z-index: 20;
+    height: 100vh;
+    background: var(--color-bg);
+    isolation: isolate;
+}
+
+/* Gradient at top of homepage section - inverted (black to transparent going down) */
+.homepage-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    z-index: 23;
+    pointer-events: none;
+}
+
+/* About Section */
+/* Deliberately empty white band. With no content left, the height has to be declared
+   here or the section would collapse to just its padding. Pure #fff rather than the
+   --color-bg off-white, since this section is meant to read as plain white. */
+#about {
+    position: relative;
+    z-index: 30;
+    min-height: 50vh;
+    padding: 0;
+    background-color: #fff;
+}
+
+/* Season 1 Section */
+#season1 {
+    position: relative;
+    z-index: 40;
+    height: 100vh;
+    min-height: 600px;
+    overflow: hidden;
+}
+
+/* Second Section */
+#content {
+    position: relative;
+    width: 100%;
+    height: 1200px;
+    background: #000;
+    z-index: 50;
+}
+
+/* Dummy Section */
+#dummy {
+    height: 200vh;
+    background: #000;
+}
+
+/* Mobile Responsive */
+@media (max-width: 860px) {
+
+    .layer-logo {
+        width: 80%;
+    }
+
+    .layer-jimmy {
+        width: 105%;
+    }
+
+    .layer-bill {
+        display: none;
+    }
+}

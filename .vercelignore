@@ -1,0 +1,5 @@
+# Not needed at runtime - the site serves the .webp exports, not these
+oct25-original-archive.tar.gz
+images/parallax/New/
+images/parallax/*.png
+node_modules/
