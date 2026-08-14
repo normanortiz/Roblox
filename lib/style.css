@@ -1506,8 +1506,8 @@ body {
     /* The only bills mobile shows. Widths and lanes differ per bill so the four do
        not read as a set. Sized off viewport height, matching the other two waves. */
     .bill-mobile { display: block; }
-    #mbill1 { left: 4%;  width: 12vh; }
-    #mbill2 { left: 30%; width: 9vh; }
-    #mbill3 { left: 56%; width: 14vh; }
-    #mbill4 { left: 78%; width: 10vh; }
+    #mbill1 { left: 2%;  width: 18vh; }
+    #mbill2 { left: 28%; width: 13.5vh; }
+    #mbill3 { left: 52%; width: 21vh; }
+    #mbill4 { left: 76%; width: 15vh; }
 }
