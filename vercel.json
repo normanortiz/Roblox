@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "beast-games-2",
+  "name": "roblox",
   "buildCommand": "echo 'No build required - static site'",
   "outputDirectory": ".",
   "env": {
