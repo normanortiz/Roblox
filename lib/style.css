@@ -1274,9 +1274,9 @@ body {
 }
 .bill-wave2 img { width: 100%; height: auto; display: block; }
 
-/* Mobile-only bills, painted ABOVE the figure - z-index 30 against his 20, unlike
-   every other bill on the page, which sits behind him. Hidden outright on desktop;
-   the scroll handler positions them and fades them in. */
+/* Mobile-only bills, painted ABOVE the figure - z-index 30 against his 20. The
+   two slow ones are pulled back behind him to z-index 15 in the mobile block below.
+   Hidden outright on desktop; the scroll handler positions them and fades them in. */
 .bill-mobile {
     display: none;
     position: absolute;
@@ -1510,4 +1510,9 @@ body {
     #mbill2 { left: 28%; width: 13.5vh; }
     #mbill3 { left: 52%; width: 21vh; }
     #mbill4 { left: 76%; width: 15vh; }
+
+    /* The two slow ones pass BEHIND the figure: 15 is under his 20 but still above the
+       overlay and the other bill layers. The fast pair keeps the base z-index of 30 and
+       stays in front of him. */
+    #mbill2, #mbill4 { z-index: 15; }
 }
