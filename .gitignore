@@ -6,3 +6,4 @@ node_modules/
 api/node_modules/
 # Backup snapshot of the original October site - not source
 oct25-original-archive.tar.gz
+.vercel
