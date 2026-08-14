@@ -1295,26 +1295,30 @@ body {
 .bill-mobile img { width: 100%; height: auto; display: block; }
 
 /* SCROLL CUE
-   The #back-to-top circle at half size (30px against 60px, 2px border against 4px) with
-   the chevron inverted, in white over a black shadow so it reads against the artwork.
-   z-index 40 clears the figure's 20. Starts invisible; the load-in reveals it and the
-   scroll handler fades it out again the moment the page moves. */
+   The #back-to-top circle with the chevron inverted, in white over a black shadow so it
+   reads against the artwork. 45px is 1.5x the 30px it started at.
+
+   position:fixed, and the element sits outside the scroll container in the markup - see
+   the note there. Anchored by `bottom` so growing it extends upward rather than pushing
+   it off the bottom edge; 43.5px puts its centre 66px above the bottom edge, which is the
+   old 81px lowered by 15. Starts invisible: the load-in reveals it, and the scroll handler
+   fades it out the moment the page moves. */
 #scroll-cue {
-    position: absolute;
+    position: fixed;
     left: 50%;
-    top: calc(100vh - 96px);
+    bottom: 43.5px;
     transform: translateX(-50%);
-    width: 30px;
-    height: 30px;
-    line-height: 27px;
+    width: 45px;
+    height: 45px;
+    line-height: 40px;
     text-align: center;
-    font-size: 0.6em;
+    font-size: 0.9em;
     color: #fff;
-    border: 2px solid #fff;
+    border: 3px solid #fff;
     border-radius: 50%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-    z-index: 40;
+    z-index: 10018;
     opacity: 0;
     pointer-events: none;
     -webkit-font-smoothing: antialiased;
@@ -1548,4 +1552,8 @@ body {
        overlay and the other bill layers. The fast pair keeps the base z-index of 30 and
        stays in front of him. */
     #mbill2, #mbill4 { z-index: 15; }
+
+    /* Same 1.5x size as desktop, but without the 15px drop - 58.5px holds the centre
+       81px above the bottom edge, where it already sat. */
+    #scroll-cue { bottom: 58.5px; }
 }

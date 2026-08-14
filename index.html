@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=95" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=96" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -169,12 +169,6 @@
             <div class="bill-mobile" id="mbill3"><img src="images/parallax/bill2.webp?v=2" alt=""></div>
             <div class="bill-mobile" id="mbill4"><img src="images/parallax/bill4.webp?v=2" alt=""></div>
 
-            <!-- Scroll cue: same circle-and-chevron as #back-to-top but inverted, half the
-                 size and white, sitting near the bottom of the first screenful. z-index 40
-                 puts it over the figure. The scroll handler fades it out as soon as the
-                 page moves. -->
-            <div id="scroll-cue" aria-hidden="true"><i class="fa fa-angle-down"></i></div>
-
         </div>
 
         <!-- Gradient overlay at bottom of hero -->
@@ -219,6 +213,12 @@
 </main>
 </div>
 
+<!-- Scroll cue: the #back-to-top circle inverted and in white, near the bottom of the
+     first screenful. It lives OUT here rather than inside the hero on purpose - Locomotive
+     transforms the scroll container, and a transformed ancestor becomes the containing
+     block for position:fixed, so inside the hero it would ride up with the page however it
+     was positioned. Out here it holds its viewport coordinates while it fades. -->
+<div id="scroll-cue" aria-hidden="true"><i class="fa fa-angle-down"></i></div>
 <a id="back-to-top" title="Back to top" data-barba-prevent="self"><i class="fa fa-angle-up"></i></a>
 <div class="warning"></div>
 
