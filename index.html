@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=80" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=81" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -880,15 +880,16 @@ window.addEventListener('load', function() {
                 finalScale = 0.699;   // 40% smaller than 1.165
             }
 
-            // End position, 50% of the viewport height lower (60% less 10%) - desktop
-            // only, so it applies
-            // to both the default and the ultrawide branch above but leaves mobile alone.
-            // Less negative = lower.
+            // End position drop, as a fraction of the viewport height. Less negative = lower.
+            // Applies only to where he ENDS UP: moveUp below is scaled by riseProgress, so
+            // the resting position at scroll 0 is untouched.
             if (!isMobile) {
                 // 0.40 = the previous 0.50 less the 0.10 that baseOffset just gained.
                 // baseOffset shifts him at EVERY scroll position, so without this the lower
                 // start would drag the ending position down with it.
                 finalMoveUp += vh * 0.40;
+            } else {
+                finalMoveUp += vh * 0.60;
             }
 
             // Reaches full size by 30% of the hero scroll (was 58.5%), and the rise runs on
