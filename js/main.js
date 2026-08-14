@@ -159,7 +159,14 @@ $(function(){
 
 	/* BACK TO HP */
 	function TopPage() {
-        scroller.scrollTo(0, 0);
+        /* Two LocomotiveScroll instances exist on this container: `scroller` above and the
+           one index.html creates, which is the one every parallax handler listens to.
+           Driving `scroller` moved the page without those handlers ever running, so the
+           hero arrived with the background still positioned for the old scroll offset -
+           a black band above it. Always drive the instance the hero is bound to, and pass
+           a real options object (the second argument used to be the number 0). */
+        const s = window.locomotiveScroll || scroller;
+        s.scrollTo(0, { duration: 900 });
 	}
 	
 	$('a#back-to-top').on('click', function() {

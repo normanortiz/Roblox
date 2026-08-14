@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, maximum-scale=1.0">
 <meta http-equiv="Content-Language" content="en_US">
 
-<title>$100M Robux Sweepstake</title>
+<title>$100M Robux Sweepstakes</title>
 <meta property="og:title" content="$100M Robux Sweepstake">
 <meta property="og:description" content="Enter the $100M Robux Sweepstake.">
 <meta property="og:image" content="images/icons/og-image.jpg">
@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=93" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=95" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -168,6 +168,12 @@
             <div class="bill-mobile" id="mbill2"><img src="images/parallax/bill3.webp?v=2" alt=""></div>
             <div class="bill-mobile" id="mbill3"><img src="images/parallax/bill2.webp?v=2" alt=""></div>
             <div class="bill-mobile" id="mbill4"><img src="images/parallax/bill4.webp?v=2" alt=""></div>
+
+            <!-- Scroll cue: same circle-and-chevron as #back-to-top but inverted, half the
+                 size and white, sitting near the bottom of the first screenful. z-index 40
+                 puts it over the figure. The scroll handler fades it out as soon as the
+                 page moves. -->
+            <div id="scroll-cue" aria-hidden="true"><i class="fa fa-angle-down"></i></div>
 
         </div>
 
@@ -314,6 +320,14 @@ window.addEventListener('load', function() {
     // Get all elements
     const background = document.getElementById('background');
     const overlay = document.getElementById('overlay');
+    // Scroll cue. Held hidden until the load-in finishes, so it does not sit on the black
+    // screen while the hero is still assembling.
+    const scrollCue = document.getElementById('scroll-cue');
+    let scrollCueReady = false;
+    /* Back-to-top. js/main.js toggles its .show class from a listener on ITS OWN
+       LocomotiveScroll instance, which never receives the events this page actually
+       scrolls with - so the button stayed permanently hidden. Driven from here instead. */
+    const backToTop = document.getElementById('back-to-top');
     const logo = document.getElementById('logo');
     const persistentLogo = document.getElementById('persistent-logo');
     const jimmy = document.getElementById('jimmy');
@@ -531,15 +545,18 @@ window.addEventListener('load', function() {
         const isMobile = window.innerWidth <= 860;
         return {
             isMobile: isMobile,
-            // Mobile 0.418 = 10% larger than the previous 0.380. This is the STARTING
+            // Mobile 0.460 = 10% larger than the previous 0.418. This is the STARTING
             // size only; the end of the rise is the absolute finalScale further down,
             // so growing the start narrows the growth range rather than moving the end.
-            scale: isMobile ? 0.418 : 0.356,
+            scale: isMobile ? 0.460 : 0.356,
             // The centre line, then dropped by this fraction of a viewport so he starts
-            // below the badge. Mobile 0.40 = the previous 0.45 less 5%, lifting his
-            // starting position. Note this term shifts him at EVERY scroll position, so
-            // finalMoveUp carries a matching correction to hold the end where it was.
-            baseOffset: heroHeight - (vh / 2) - (vh * (isMobile ? 0.40 : 0.45))
+            // below the badge. Mobile 0.35 = the previous 0.40 less 5%.
+            //
+            // This term shifts him at EVERY scroll position, so lowering it by 5% raises
+            // his start AND the end of his rise by the same 5% - which is what was asked
+            // for here. finalMoveUp is deliberately left alone this time; correcting it
+            // would have held the end still.
+            baseOffset: heroHeight - (vh / 2) - (vh * (isMobile ? 0.35 : 0.45))
         };
     }
     function jimmyTransform(extraY, scale) {
@@ -751,6 +768,11 @@ window.addEventListener('load', function() {
                     // the bills genuinely emerge from behind him rather than beside him.
                     setTimeout(function () {
                         if (window.__runBillsIntro) window.__runBillsIntro();
+                        // Hero is fully assembled - now invite the scroll.
+                        if (scrollCue) {
+                            scrollCueReady = true;
+                            scrollCue.style.opacity = '1';
+                        }
                     }, 450);
                 }, 300);
             }, 700);
@@ -985,6 +1007,18 @@ window.addEventListener('load', function() {
                 el.style.transform = 'translate3d(' + swayX + 'px, ' + y + 'px, 0) rotate(' + rot + 'deg)';
                 el.style.opacity = Math.min(past / 4, 1);
             }
+        }
+
+        // 5e. BACK TO TOP - visible once the page has moved past the first 150px.
+        if (backToTop) {
+            backToTop.classList.toggle('show', scrollY > 150);
+        }
+
+        // 5d. SCROLL CUE - out as soon as the page moves at all. Binary rather than
+        // proportional: the CSS transition does the smoothing, so this reads as a quick
+        // fade the instant scrolling starts, and it returns on the way back to the top.
+        if (scrollCue && scrollCueReady) {
+            scrollCue.style.opacity = scrollPercent > 0.5 ? '0' : '1';
         }
 
         // 5c. MOBILE BILLS - four of them, and the only bills mobile shows. Viewport-anchored:
