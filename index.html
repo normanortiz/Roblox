@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=86" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=87" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -894,7 +894,7 @@ window.addEventListener('load', function() {
 
             if (isMobile) {
                 finalMoveUp = -370;
-                finalScale = 0.775;   // 40% smaller than 1.292
+                finalScale = 0.736;   // 5% smaller than the 0.775 it ended at before
             } else if (aspectRatio > 16/9) {
                 finalMoveUp = -315;
                 finalScale = 0.699;   // 40% smaller than 1.165
@@ -909,11 +909,11 @@ window.addEventListener('load', function() {
                 // start would drag the ending position down with it.
                 finalMoveUp += vh * 0.40;
             } else {
-                // 0.55 = the 0.65 this sat at, less 10% of a viewport height to raise the
-                // end of his rise. The 0.65 itself was 0.60 plus the 0.05 that baseOffset
-                // lifted his start by, a correction that has to stay: without it, changing
+                // 0.58 = the 0.55 this sat at, plus 3% of a viewport height to lower the
+                // end of his rise. Folded into the same constant is the 0.05 correction
+                // for the lift baseOffset gives his start - that has to stay, or changing
                 // his starting position drags the ending position along too.
-                finalMoveUp += vh * 0.55;
+                finalMoveUp += vh * 0.58;
             }
 
             // Reaches full size by 30% of the hero scroll (was 58.5%), and the rise runs on
