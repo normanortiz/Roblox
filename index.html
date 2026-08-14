@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=87" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=89" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -159,6 +159,15 @@
             <div class="layer-bill bill-wave2" id="wbill8"><img src="images/parallax/bill1.webp?v=2" alt=""></div>
             <div class="layer-bill bill-wave2" id="wbill9"><img src="images/parallax/bill4.webp?v=2" alt=""></div>
             <div class="layer-bill bill-wave2" id="wbill10"><img src="images/parallax/bill3.webp?v=2" alt=""></div>
+
+            <!-- Mobile-only bills. They ride with the hero rather than the viewport, so as
+                 the page scrolls up they emerge from the bottom edge of the screen, each
+                 falling at its own rate. Deliberately NOT class="layer-bill" - that class
+                 is display:none on mobile, which is what hides the two sets above. -->
+            <div class="bill-mobile" id="mbill1"><img src="images/parallax/bill1.webp?v=2" alt=""></div>
+            <div class="bill-mobile" id="mbill2"><img src="images/parallax/bill3.webp?v=2" alt=""></div>
+            <div class="bill-mobile" id="mbill3"><img src="images/parallax/bill2.webp?v=2" alt=""></div>
+            <div class="bill-mobile" id="mbill4"><img src="images/parallax/bill4.webp?v=2" alt=""></div>
 
         </div>
 
@@ -368,6 +377,26 @@ window.addEventListener('load', function() {
     for (let i = 1; i <= 10; i++) {
         const el = document.getElementById('wbill' + i);
         if (el) wave2.push(el);
+    }
+
+    /* Mobile-only bills. Unlike the wave above, these carry NO scrollY term, so they ride
+       with the hero instead of the viewport: the page scrolling up is what carries them in
+       from the bottom edge of the screen, while each one falls at its own rate on top of
+       that. `below` is how far under the bottom edge it waits before the scroll reaches it.
+
+       Fall speeds are small on purpose. The hero is only 150vh and these start a full
+       viewport down it, so there is just half a viewport of room beneath them before
+       #hero's overflow:hidden would clip them - the scroll block clamps for that too. */
+    const mbills = [];
+    const mbillConfig = [
+        { speed: 1.4, sway: 20, rot: 1.0,  rot0: 16,  below: 20,  phase: 0   },
+        { speed: 2.2, sway: 12, rot: -1.6, rot0: -34, below: 110, phase: 1.7 },
+        { speed: 2.9, sway: 25, rot: 0.6,  rot0: 58,  below: 60,  phase: 2.9 },
+        { speed: 3.6, sway: 15, rot: -1.1, rot0: -20, below: 190, phase: 0.9 }
+    ];
+    for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById('mbill' + i);
+        if (el) mbills.push(el);
     }
 
     // Get viewport height
@@ -950,6 +979,35 @@ window.addEventListener('load', function() {
                 const y = scrollY - cfg.above + fall;
                 el.style.transform = 'translate3d(' + swayX + 'px, ' + y + 'px, 0) rotate(' + rot + 'deg)';
                 el.style.opacity = Math.min(past / 4, 1);
+            }
+        }
+
+        // 5c. MOBILE BILLS - four of them, and the only bills mobile shows. Hero-anchored
+        // rather than viewport-anchored (no scrollY term), so the page scrolling up is what
+        // carries them into view from the bottom edge while each falls at its own rate.
+        // Each has its own speed, sway wavelength and rotation, so they never travel as a
+        // block. Desktop leaves them alone entirely - CSS keeps them display:none there.
+        if (mbills.length && window.innerWidth <= 860) {
+            const MB_START = 4;                                    // % of hero before they begin
+            const past = Math.max(0, scrollPercent - MB_START);
+            for (let i = 0; i < mbills.length; i++) {
+                const el = mbills[i], cfg = mbillConfig[i];
+                if (past <= 0) {
+                    // Park at the start position, not at y=0 - otherwise the first frame
+                    // after MB_START jumps a whole viewport as it fades in.
+                    el.style.transform = 'translate3d(0px, ' + (vh + cfg.below) + 'px, 0) rotate(' + cfg.rot0 + 'deg)';
+                    el.style.opacity = '0';
+                    continue;
+                }
+                const fall = past * cfg.speed;
+                const swayX = Math.sin((past + cfg.phase) * 0.11) * cfg.sway;
+                const rot = cfg.rot0 + (past * cfg.rot);
+                // Clamp so the bill stops falling rather than being cut off by the hero's
+                // overflow:hidden. When it engages the bill simply rides with the page.
+                const maxY = heroHeight - (el.offsetHeight || 0) - 4;
+                const y = Math.min(vh + cfg.below + fall, maxY);
+                el.style.transform = 'translate3d(' + swayX + 'px, ' + y + 'px, 0) rotate(' + rot + 'deg)';
+                el.style.opacity = Math.min(past / 5, 1);
             }
         }
 

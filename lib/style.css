@@ -771,7 +771,10 @@ box-sizing: border-box;
        load-in holds scale 1 on mobile, so the badge is one size from the preloader all
        the way through to the loaded page. Unlike desktop, there is no growth to allow
        for - change this and the three mobile widths in index.html together. */
-    .c-loader__logo { width:59.39vw; max-width:none; padding:0; margin:0; }
+    /* top:-30px matches the hero badge, which sits at calc(50vh - 30px) on mobile while
+       this one is flex-centred on 50vh. Without it the badge jumps down 30px the moment
+       the preloader hands over. Desktop needs no offset - the hero badge is at 50vh. */
+    .c-loader__logo { width:59.39vw; max-width:none; padding:0; margin:0; top:-30px; }
     .c-loader__logo img { width:100%; height:auto; border:none; outline:none; margin:0; padding:0; }
     
     /* BODY */
@@ -1271,6 +1274,20 @@ body {
 }
 .bill-wave2 img { width: 100%; height: auto; display: block; }
 
+/* Mobile-only bills, painted ABOVE the figure - z-index 30 against his 20, unlike
+   every other bill on the page, which sits behind him. Hidden outright on desktop;
+   the scroll handler positions them and fades them in. */
+.bill-mobile {
+    display: none;
+    position: absolute;
+    top: 0;
+    z-index: 30;
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+.bill-mobile img { width: 100%; height: auto; display: block; }
+
 #wbill1  { left: 4%;   width: 13vh; }
 #wbill2  { left: 15%;  width: 10vh; }
 #wbill3  { left: 26%;  width: 15vh; }
@@ -1485,4 +1502,12 @@ body {
     .layer-bill {
         display: none;
     }
+
+    /* The only bills mobile shows. Widths and lanes differ per bill so the four do
+       not read as a set. Sized off viewport height, matching the other two waves. */
+    .bill-mobile { display: block; }
+    #mbill1 { left: 4%;  width: 12vh; }
+    #mbill2 { left: 30%; width: 9vh; }
+    #mbill3 { left: 56%; width: 14vh; }
+    #mbill4 { left: 78%; width: 10vh; }
 }
