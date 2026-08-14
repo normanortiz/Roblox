@@ -1296,10 +1296,17 @@ body {
     pointer-events: none;
 }
 
+/* Hidden until the load-in burst releases them from the centre of the screen.
+   runBillsIntro() in index.html adds .is-burst as each one launches. */
 .layer-bill {
     position: absolute;
     z-index: 5;
+    opacity: 0;
     will-change: transform;
+}
+
+.layer-bill.is-burst {
+    opacity: 1;
 }
 
 /* Bills on right side and center should be above Jimmy */

@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=77" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=80" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -319,6 +319,34 @@ window.addEventListener('load', function() {
         }
     }
 
+    /* Per-bill scroll profile. Module scope because two places read it: the scroll
+       handler below, and runBillsIntro(), which needs each bill's resting rotation
+       and scale so the load-in burst lands exactly on the state scrolling expects. */
+    const billAnimations = [
+        { speed: 25, rotation: 1.2, sway: 8, initialRotate: 15 },
+        { speed: 19, rotation: -2.0, sway: 10, initialRotate: 75 },
+        { speed: 28, rotation: 1.6, sway: 6, initialRotate: 25 },
+        { speed: 17, rotation: -0.25, sway: 9, initialRotate: -15 },
+        { speed: 14, rotation: 0.2, sway: 11, initialRotate: 30 },
+        { speed: 19, rotation: -0.35, sway: 7, initialRotate: -25 },
+        { speed: 16, rotation: 0.28, sway: 8, initialRotate: 18 },
+        { speed: 20, rotation: 0.4, sway: 12, initialRotate: -30 },
+        { speed: 25, rotation: 0, sway: 5, initialRotate: 22 },
+        { speed: 8, rotation: -2.0, sway: 15, initialRotate: -18 },
+        { speed: 25, rotation: -1.5, sway: 4, initialRotate: 110 },
+        { speed: 5, rotation: -0.32, sway: 9, initialRotate: -22 },
+        { speed: 20, rotation: 2.5, sway: 7, initialRotate: -90 }
+    ];
+
+    // The transform a bill settles on at scroll 0 - identical to what the scroll
+    // handler writes when scrollPercent is 0, so the burst hands over invisibly.
+    const BILL_REST_SCALE = 0.95;
+    function billRestTransform(billNum) {
+        const anim = billAnimations[billNum];
+        const rot = anim ? anim.initialRotate : 0;
+        return 'translateY(0px) translateX(0px) rotate(' + rot + 'deg) scale(' + BILL_REST_SCALE + ')';
+    }
+
     // Second bill wave, with a per-bill fall profile. `above` is how far above the
     // viewport top each one waits before it is released.
     const wave2 = [];
@@ -486,6 +514,9 @@ window.addEventListener('load', function() {
        Any real scroll cancels it, exactly like the badge intro. */
     let jimmyIntroAnim = null;
 
+    // His resting bounding box, filled in by runJimmyIntro (see the note there).
+    let jimmyRestRect = null;
+
     function runJimmyIntro() {
         if (!jimmy || jimmyIntroDone) return;
 
@@ -516,6 +547,14 @@ window.addEventListener('load', function() {
             return;
         }
 
+        /* Record where he ENDS UP, measured rather than derived, before the animation
+           starts moving him. runBillsIntro reads this to place the burst origin behind
+           him - by the time the bills launch he is mid-flight, so his live rect is
+           useless for that. */
+        jimmy.style.transform = to;
+        void jimmy.offsetWidth;
+        jimmyRestRect = jimmy.getBoundingClientRect();
+
         jimmyIntroAnim = jimmy.animate(
             [
                 { transform: from, offset: 0,    easing: 'cubic-bezier(0.16, 0.84, 0.44, 1)' },
@@ -535,6 +574,102 @@ window.addEventListener('load', function() {
         };
     }
     window.__runJimmyIntro = runJimmyIntro;
+
+    /* BILL LOAD-IN BURST
+       Every bill starts collapsed at the centre of the viewport - which is behind the
+       figure, since .layer-bill is z-index 5 and .layer-jimmy is 20 - then flies out to
+       its resting spot, overshoots slightly and settles back into place.
+
+       Bills parked off-screen by design (the -10 entries in billPositions) are skipped:
+       they would be visible flying out to nowhere. They are just switched on in place.
+
+       The burst runs on the Web Animations API rather than a CSS transition because a
+       transition can only ease between two values and cannot pass THROUGH the overshoot. */
+    let billsIntroDone = false;
+    const BILL_BURST_MS = 900;       // per-bill flight time
+    const BILL_BURST_STAGGER = 28;   // ms between successive bills leaving the centre
+    const BILL_OVERSHOOT = 0.11;     // fraction of the flight travelled past the resting spot
+    const BILL_START_SCALE = 0.16;   // size at the centre, as a fraction of the resting scale
+
+    // `replay` re-runs the burst from the current resting layout; the load sequence
+    // never passes it, so the burst plays once per page load.
+    function runBillsIntro(replay) {
+        if (billsIntroDone && !replay) return;
+        billsIntroDone = true;
+
+        /* Origin of the burst. Horizontally it is the centre of the screen, which is also
+           where the figure stands. Vertically the true centre sits ABOVE his head on a tall
+           viewport, so the bills would appear over his shoulder instead of from behind him;
+           clamping the origin down to just inside his top edge keeps it hidden by him while
+           staying as close to the centre of the screen as the layout allows. */
+        let cx = window.innerWidth / 2;
+        let cy = window.innerHeight / 2;
+        if (jimmyRestRect && jimmyRestRect.width) {
+            cx = jimmyRestRect.left + jimmyRestRect.width / 2;
+            cy = Math.max(cy, jimmyRestRect.top + jimmyRestRect.height * 0.16);
+        }
+
+        bills.forEach(function (bill, i) {
+            const billNum = parseInt(bill.dataset.billNumber) - 1;
+            const rest = billRestTransform(billNum);
+            const anim = billAnimations[billNum];
+            const rot = anim ? anim.initialRotate : 0;
+
+            // Measure from the resting state. Rotation and centre-origin scaling do not
+            // move an element's centre, so this rect's centre IS the layout centre.
+            bill.style.transform = rest;
+            const r = bill.getBoundingClientRect();
+
+            // Parked off-screen on purpose - show it, do not fly it.
+            const offscreen = r.right < 0 || r.left > window.innerWidth ||
+                              r.bottom < 0 || r.top > window.innerHeight;
+            if (offscreen || !r.width) {
+                bill.classList.add('is-burst');
+                return;
+            }
+
+            // Vector from the bill's resting spot to the centre of the screen.
+            const dx = cx - (r.left + r.width / 2);
+            const dy = cy - (r.top + r.height / 2);
+
+            const startScale = BILL_REST_SCALE * BILL_START_SCALE;
+            const peakScale = BILL_REST_SCALE * 1.05;
+            const tf = function (x, y, deg, s) {
+                return 'translate(' + x + 'px, ' + y + 'px) rotate(' + deg + 'deg) scale(' + s + ')';
+            };
+
+            bill.classList.add('is-burst');
+            bill.animate([
+                {   // collapsed at the centre, behind the figure
+                    transform: tf(dx, dy, rot - 40, startScale),
+                    opacity: 0,
+                    offset: 0,
+                    easing: 'cubic-bezier(0.13, 0.75, 0.3, 1)'
+                },
+                {   // visible almost immediately so the flight itself reads
+                    transform: tf(dx * 0.72, dy * 0.72, rot - 29, startScale + (BILL_REST_SCALE - startScale) * 0.34),
+                    opacity: 1,
+                    offset: 0.16
+                },
+                {   // slightly past the resting spot, still travelling outward
+                    transform: tf(-dx * BILL_OVERSHOOT, -dy * BILL_OVERSHOOT, rot + 4, peakScale),
+                    opacity: 1,
+                    offset: 0.7,
+                    easing: 'cubic-bezier(0.4, 0, 0.3, 1)'
+                },
+                {   // settle back onto the exact state the scroll handler expects
+                    transform: tf(0, 0, rot, BILL_REST_SCALE),
+                    opacity: 1,
+                    offset: 1
+                }
+            ], {
+                duration: BILL_BURST_MS,
+                delay: i * BILL_BURST_STAGGER,
+                fill: 'backwards'   // hold the centre pose during the stagger delay
+            });
+        });
+    }
+    window.__runBillsIntro = runBillsIntro;
 
     function runLogoIntro() {
         if (!logo || logoIntroDone) return;
@@ -565,6 +700,11 @@ window.addEventListener('load', function() {
                 // 0.3s beat, then he comes up from the bottom.
                 setTimeout(function () {
                     if (window.__runJimmyIntro) window.__runJimmyIntro();
+                    // Part-way into his rise he is covering the centre of the screen, so
+                    // the bills genuinely emerge from behind him rather than beside him.
+                    setTimeout(function () {
+                        if (window.__runBillsIntro) window.__runBillsIntro();
+                    }, 450);
                 }, 300);
             }, 700);
         });
@@ -788,23 +928,8 @@ window.addEventListener('load', function() {
             }
         }
 
-        // 5. BILLS: Confetti-like falling motion
-        const billAnimations = [
-            { speed: 25, rotation: 1.2, sway: 8, initialRotate: 15 },
-            { speed: 19, rotation: -2.0, sway: 10, initialRotate: 75 },
-            { speed: 28, rotation: 1.6, sway: 6, initialRotate: 25 },
-            { speed: 17, rotation: -0.25, sway: 9, initialRotate: -15 },
-            { speed: 14, rotation: 0.2, sway: 11, initialRotate: 30 },
-            { speed: 19, rotation: -0.35, sway: 7, initialRotate: -25 },
-            { speed: 16, rotation: 0.28, sway: 8, initialRotate: 18 },
-            { speed: 20, rotation: 0.4, sway: 12, initialRotate: -30 },
-            { speed: 25, rotation: 0, sway: 5, initialRotate: 22 },
-            { speed: 8, rotation: -2.0, sway: 15, initialRotate: -18 },
-            { speed: 25, rotation: -1.5, sway: 4, initialRotate: 110 },
-            { speed: 5, rotation: -0.32, sway: 9, initialRotate: -22 },
-            { speed: 20, rotation: 2.5, sway: 7, initialRotate: -90 }
-        ];
-
+        // 5. BILLS: Confetti-like falling motion (billAnimations is declared at the
+        // top of this script - see the note there about the load-in burst sharing it)
         bills.forEach((bill, index) => {
             const billNum = parseInt(bill.dataset.billNumber) - 1;
             if (billAnimations[billNum]) {
