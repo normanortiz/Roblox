@@ -1581,7 +1581,26 @@ body {
        stays in front of him. */
     #mbill2, #mbill4 { z-index: 15; }
 
-    /* Same 1.5x size as desktop, but without the 15px drop - 58.5px holds the centre
-       81px above the bottom edge, where it already sat. */
-    #scroll-cue { bottom: 58.5px; }
+    /* Sits far closer to the bottom edge than desktop: 18px holds the centre 40.5px up,
+       half the 81px it used to sit at. The bounce below travels 8px down at its lowest,
+       so the circle still clears the edge by 10px at the bottom of every cycle. */
+    #scroll-cue {
+        bottom: 18px;
+        /* Runs forever - it is the only thing telling a phone user there is more page
+           below the fold. The scroll handler fades the element out on the first movement,
+           so the animation stops being visible the moment it has done its job.
+           translateX(-50%) is repeated inside the keyframes because a transform animation
+           replaces the static transform outright rather than composing with it. */
+        animation: scroll-cue-bounce 1.6s ease-in-out infinite;
+    }
+
+    @keyframes scroll-cue-bounce {
+        0%, 100% { transform: translate(-50%, 0); }
+        50%      { transform: translate(-50%, 8px); }
+    }
+
+    /* Anyone who has asked the OS for less motion keeps the cue, just parked still. */
+    @media (prefers-reduced-motion: reduce) {
+        #scroll-cue { animation: none; }
+    }
 }
