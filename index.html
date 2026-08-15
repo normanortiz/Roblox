@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=96" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=97" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -90,12 +90,19 @@
         <div class="parallax-container">
 
             <!-- Layer 1: Background (furthest back)
-                 Animated GIF (800x450, 96 frames @ 20fps, 4.8s loop). An <img> plays the
-                 GIF's own animation natively, so no JS drives it. Sized by
-                 lib/style.css .layer-background img (height:100%, width:auto) and its
-                 height is animated on scroll by the handler further down this file. -->
+                 Two variants, one shown per breakpoint - see the display swap at the
+                 860px media query in lib/style.css:
+                   desktop (>860px) - the static background.webp, unchanged
+                   mobile  (<=860px) - the looping clip
+                 The <video> deliberately ships with NO src, poster or preload: those are
+                 attached by the attachBackgroundVideo() script below, and only when the
+                 mobile media query matches, so a desktop visit never downloads the
+                 several MB of video sitting hidden in the DOM.
+                 Whichever of the two is active is sized on scroll by the handler further
+                 down this file, which picks it with the same 860px test. -->
             <div class="layer-background" id="background">
-                <img src="images/parallax/background.gif" alt="Background">
+                <img src="images/parallax/background.webp?v=2" alt="Background">
+                <video muted loop playsinline preload="none" aria-hidden="true"></video>
             </div>
 
             <!-- Layer 2: Overlay -->
@@ -179,6 +186,71 @@
         <div class="hero-gradient"></div>
     </section>
 
+    <script>
+    /* Attaches the mobile hero background clip.
+       Runs inline, immediately after the hero markup, so the download starts while the
+       preloader is still up rather than waiting for DOMContentLoaded.
+
+       The <video> above is emitted empty on purpose. Attaching the sources here, behind
+       the same 860px query the stylesheet uses, is what keeps desktop from downloading
+       a video it will never display. Re-checked on breakpoint change so a rotated tablet
+       or a narrowed window still gets it; the attached flag makes that a one-time cost. */
+    (function attachBackgroundVideo() {
+        var video = document.querySelector('.layer-background video');
+        if (!video) return;
+
+        var mobile = window.matchMedia('(max-width: 860px)');
+        var SOURCES = [
+            // WebM first: Android Chrome and Firefox take the VP9 and it is ~30% lighter.
+            // iOS Safari skips it and falls through to the H.264 MP4. Both are transcodes -
+            // the delivered master was HEVC 10-bit, which only Safari can decode.
+            ['images/parallax/background.webm', 'video/webm'],
+            ['images/parallax/background.mp4', 'video/mp4']
+        ];
+
+        function attach() {
+            if (!mobile.matches || video.dataset.attached) return;
+            video.dataset.attached = '1';
+
+            // Paints frame 1 the moment the preloader lifts, so the hero is never empty
+            // while the first video frames are still arriving.
+            video.poster = 'images/parallax/background-poster.webp';
+            video.preload = 'auto';
+            SOURCES.forEach(function (s) {
+                var source = document.createElement('source');
+                source.src = s[0];
+                source.type = s[1];
+                video.appendChild(source);
+            });
+            video.load();
+            play();
+
+            /* Nothing on the page ever calls pause(), so a pause here means the browser
+               stopped it: the tab was backgrounded, the phone took a call, or the OS
+               reclaimed the decoder. Those do not always restart on their own, and the
+               hero would then sit on a frozen frame. Steady-state looping fires no pause
+               event at all, so this costs nothing while the clip is running normally. */
+            video.addEventListener('pause', function () {
+                if (!video.ended) play();
+            });
+        }
+
+        // play() rejects rather than throws on a blocked autoplay. The element is muted
+        // and playsinline so it should never be blocked, but swallow it either way and
+        // leave the poster showing instead of spilling into the console.
+        function play() {
+            var p = video.play();
+            if (p && p.catch) p.catch(function () {});
+        }
+
+        attach();
+        mobile.addEventListener('change', attach);
+
+        // Read by the preloader handover and the scroll handler at the bottom of the file.
+        window.__bgVideoPlay = play;
+    })();
+    </script>
+
     <!-- Black divider line between hero and homepage -->
     <div class="hero-homepage-divider"></div>
 
@@ -260,8 +332,15 @@ window.addEventListener('load', function() {
                 document.getElementById('c-loader').classList.add('loaded');
 
                 // Fade the hero background up out of the black preloader over 1.5s.
-                var bgImg = document.querySelector('.layer-background img');
-                if (bgImg) bgImg.classList.add('is-visible');
+                // Both variants get the class: only one of them is displayed at a time
+                // (860px swap in lib/style.css), so the other one fading is a no-op and
+                // this stays correct if the breakpoint is crossed later.
+                document.querySelectorAll('.layer-background img, .layer-background video')
+                    .forEach(function (el) { el.classList.add('is-visible'); });
+
+                // Nudge the clip in case autoplay was evaluated while the preloader still
+                // covered it. No-op on desktop, where the video is never attached.
+                if (window.__bgVideoPlay) window.__bgVideoPlay();
 
                 // Hand the badge over from the preloader to the hero: it is already centred
                 // at the same size, so this reads as one continuous element.
@@ -834,11 +913,19 @@ window.addEventListener('load', function() {
         // while the page scrolls up. Once the shrink finishes at ANIM_END the height is
         // constant, so from then on the image simply rides with the hero - same direction,
         // same speed as the scroll.
-        if (background && background.querySelector('img')) {
-            const img = background.querySelector('img');
+        //
+        // Only one of the two background elements is displayed at a time, so size the one
+        // this breakpoint actually shows. The 860px test is the same one used by the
+        // display swap in lib/style.css and by isMobile below - they must agree, or the
+        // hidden element would be the one getting sized.
+        const bgIsMobile = window.innerWidth <= 860;
+        const img = background
+            ? background.querySelector(bgIsMobile ? 'video' : 'img')
+            : null;
+        if (background && img) {
             const ANIM_END = 30;               // matches the figure's growth window
             const MAX_WIDTH_VISIBLE = 0.98;    // never show more than 98% of the image width
-            const isMobile = window.innerWidth <= 860;
+            const isMobile = bgIsMobile;
             const progress = Math.min(scrollPercent / ANIM_END, 1);
 
             // The image is held VISUALLY STATIC for the first ANIM_END% of the hero: it is
@@ -867,14 +954,22 @@ window.addEventListener('load', function() {
             const drop = START_DROP + ((END_DROP - START_DROP) * progress);
 
             const heroPx = background.clientHeight || heroHeight;
-            const aspect = (img.naturalWidth && img.naturalHeight)
-                ? img.naturalWidth / img.naturalHeight
-                : 800 / 450;   // background.gif's intrinsic size, used only before it decodes
+            // Intrinsic size comes from different properties on the two elements, and both
+            // read 0 until the file has loaded, so each falls back to its known dimensions
+            // for the handful of frames before that: 1920x1080 for the clip, 2339x1792 for
+            // the still.
+            const aspect = bgIsMobile
+                ? ((img.videoWidth && img.videoHeight)
+                    ? img.videoWidth / img.videoHeight
+                    : 1920 / 1080)
+                : ((img.naturalWidth && img.naturalHeight)
+                    ? img.naturalWidth / img.naturalHeight
+                    : 2339 / 1792);
 
             // Floor: tall enough to cover the viewport (plus the drop), and wide enough that
-            // no more than MAX_WIDTH_VISIBLE of the image is on screen. With the 16:9 GIF the
-            // width term is small enough that the height term (vh + drop) wins everywhere, so
-            // the end state is set by the coverage floor rather than by MAX_WIDTH_VISIBLE.
+            // no more than MAX_WIDTH_VISIBLE of the image is on screen. On desktop the width
+            // term wins, which is what pins the end state at ~98% of the width. On mobile the
+            // height term (vh + drop) always wins, so the end state is the coverage floor.
             const coverFloor = Math.max(vh + drop,
                                         window.innerWidth / (MAX_WIDTH_VISIBLE * aspect));
 
@@ -889,7 +984,11 @@ window.addEventListener('load', function() {
             const bottomPx = heroPx - vh - compensated - drop;
 
             img.style.height = height + 'px';
-            img.style.width = 'auto';
+            // The still keeps width:auto exactly as before. The clip gets an explicit
+            // width because a <video> has no intrinsic ratio until metadata has loaded,
+            // and auto would collapse it to the 300x150 default until then. The number is
+            // what auto resolves to afterwards, so this only fixes the first frames.
+            img.style.width = bgIsMobile ? (height * aspect) + 'px' : 'auto';
             img.style.bottom = bottomPx + 'px';
             img.style.transform = 'translateX(-50%)';
         }

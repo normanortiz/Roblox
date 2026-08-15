@@ -1187,11 +1187,15 @@ body {
 
 /* Anchored to the BOTTOM of the hero, always. Because .layer-background spans the full
    hero, bottom:0 here is the hero's bottom edge - and that edge moves up as the page
-   scrolls, so the image tracks it for free with no compensating maths.
+   scrolls, so the picture tracks it for free with no compensating maths.
    Only the height is animated (by the scroll handler); width:auto keeps the natural
-   aspect, so the image scales as one piece and the sides simply crop.
-   No object-fit: the element IS the picture, so it can never letterbox. */
-.layer-background img {
+   aspect, so it scales as one piece and the sides simply crop.
+   No object-fit: the element IS the picture, so it can never letterbox.
+
+   Both variants share this geometry. Only one is ever displayed - the img on desktop,
+   the video below 860px - see the swap at the end of this block. */
+.layer-background img,
+.layer-background video {
     position: absolute;
     bottom: 0;
     left: 50%;
@@ -1205,8 +1209,32 @@ body {
     transition: opacity 1.5s ease-out;
 }
 
-.layer-background img.is-visible {
+/* Holds the 16:9 box before loadedmetadata gives the element an intrinsic ratio,
+   so width:auto cannot briefly collapse to the 300x150 default video size. */
+.layer-background video {
+    aspect-ratio: 16 / 9;
+}
+
+.layer-background img.is-visible,
+.layer-background video.is-visible {
     opacity: 1;
+}
+
+/* Desktop shows the still; the clip is display:none so it is never composited. It also
+   has no src at this width - index.html only attaches the sources under the matching
+   860px query, so this is a hidden empty element, not a hidden download. */
+.layer-background video {
+    display: none;
+}
+
+@media (max-width: 860px) {
+    .layer-background img {
+        display: none;
+    }
+
+    .layer-background video {
+        display: block;
+    }
 }
 
 /* Layer 2: Overlay - Over background - Frosted glass effect */
