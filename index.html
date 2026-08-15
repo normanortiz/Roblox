@@ -89,9 +89,13 @@
 
         <div class="parallax-container">
 
-            <!-- Layer 1: Background (furthest back) -->
+            <!-- Layer 1: Background (furthest back)
+                 Animated GIF (800x450, 96 frames @ 20fps, 4.8s loop). An <img> plays the
+                 GIF's own animation natively, so no JS drives it. Sized by
+                 lib/style.css .layer-background img (height:100%, width:auto) and its
+                 height is animated on scroll by the handler further down this file. -->
             <div class="layer-background" id="background">
-                <img src="images/parallax/background.webp?v=2" alt="Background">
+                <img src="images/parallax/background.gif" alt="Background">
             </div>
 
             <!-- Layer 2: Overlay -->
@@ -865,11 +869,12 @@ window.addEventListener('load', function() {
             const heroPx = background.clientHeight || heroHeight;
             const aspect = (img.naturalWidth && img.naturalHeight)
                 ? img.naturalWidth / img.naturalHeight
-                : 2339 / 1792;
+                : 800 / 450;   // background.gif's intrinsic size, used only before it decodes
 
             // Floor: tall enough to cover the viewport (plus the drop), and wide enough that
-            // no more than MAX_WIDTH_VISIBLE of the image is on screen. On any normal desktop
-            // the width term wins, which is what pins the end state at ~98% of the width.
+            // no more than MAX_WIDTH_VISIBLE of the image is on screen. With the 16:9 GIF the
+            // width term is small enough that the height term (vh + drop) wins everywhere, so
+            // the end state is set by the coverage floor rather than by MAX_WIDTH_VISIBLE.
             const coverFloor = Math.max(vh + drop,
                                         window.innerWidth / (MAX_WIDTH_VISIBLE * aspect));
 
