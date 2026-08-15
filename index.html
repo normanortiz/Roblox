@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=98" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=99" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -225,13 +225,31 @@
             video.load();
             play();
 
-            /* Nothing on the page ever calls pause(), so a pause here means the browser
-               stopped it: the tab was backgrounded, the phone took a call, or the OS
-               reclaimed the decoder. Those do not always restart on their own, and the
-               hero would then sit on a frozen frame. Steady-state looping fires no pause
-               event at all, so this costs nothing while the clip is running normally. */
+            /* KEEPING IT LOOPING.
+               The loop attribute alone is not enough on a phone. Everything below is a
+               way the clip can stop that the attribute does not cover, and each one
+               leaves the hero frozen on a still frame until something restarts it.
+
+               Nothing on the page ever calls pause(), so any pause is the browser's
+               doing: backgrounded tab, an incoming call, the OS reclaiming the decoder.
+               Normal looping fires no pause event, so this is idle while all is well. */
             video.addEventListener('pause', function () {
-                if (!video.ended) play();
+                play();
+            });
+
+            /* If 'ended' ever fires, looping has failed outright - some mobile browsers
+               drop it under Low Power Mode. Rewind by hand. This deliberately does NOT
+               sit behind an !ended check, which is the bug that would have made the
+               listener above give up in exactly the case it is needed for. */
+            video.addEventListener('ended', function () {
+                video.currentTime = 0;
+                play();
+            });
+
+            /* Coming back to the tab is the most common way it is found stopped, and the
+               pause may have been swallowed while the page was hidden. */
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'visible') play();
             });
         }
 
@@ -628,18 +646,19 @@ window.addEventListener('load', function() {
         const isMobile = window.innerWidth <= 860;
         return {
             isMobile: isMobile,
-            // Mobile 0.460 = 10% larger than the previous 0.418. This is the STARTING
+            // Mobile 0.483 = 5% larger than the previous 0.460. This is the STARTING
             // size only; the end of the rise is the absolute finalScale further down,
             // so growing the start narrows the growth range rather than moving the end.
-            scale: isMobile ? 0.460 : 0.356,
+            scale: isMobile ? 0.483 : 0.356,
             // The centre line, then dropped by this fraction of a viewport so he starts
-            // below the badge. Mobile 0.35 = the previous 0.40 less 5%.
+            // below the badge. Mobile 0.30 = the previous 0.35 less a further 5%.
             //
             // This term shifts him at EVERY scroll position, so lowering it by 5% raises
             // his start AND the end of his rise by the same 5% - which is what was asked
-            // for here. finalMoveUp is deliberately left alone this time; correcting it
-            // would have held the end still.
-            baseOffset: heroHeight - (vh / 2) - (vh * (isMobile ? 0.35 : 0.45))
+            // for here, same as last time. finalMoveUp is again left alone; correcting it
+            // would hold the end still, and the end moving with the start is the look
+            // that has been signed off twice now.
+            baseOffset: heroHeight - (vh / 2) - (vh * (isMobile ? 0.30 : 0.45))
         };
     }
     function jimmyTransform(extraY, scale) {
@@ -939,8 +958,8 @@ window.addEventListener('load', function() {
             //   *_DROP  - how far it is pushed below the viewport bottom. Position only.
             const SIZE_START = 1.30;   // at rest - a step further out than 1.425
             const SIZE_END   = 1.0;    // by ANIM_END - fully zoomed out, ~98% of the width
-            // Mobile start 0.95 = 0.85 plus a further 10% of a viewport height.
-            const START_DROP = vh * (isMobile ? 0.95 : 1.45);
+            // Mobile start 1.05 = 0.95 plus a further 10% of a viewport height.
+            const START_DROP = vh * (isMobile ? 1.05 : 1.45);
             // Absolute, NOT derived from START_DROP. It used to be START_DROP + 0.10, which
             // meant every "lower the start" request silently dragged the ending position down
             // with it. 0.55 is where the end sat when it was last set deliberately.
@@ -950,11 +969,10 @@ window.addEventListener('load', function() {
             // size and the ending drop the same number - a lower end is necessarily a
             // larger, less zoomed-out end, because anything smaller would expose the top.
             // So on mobile this number is the only control there is for BOTH where the
-            // image finishes and how far out it has zoomed - raising the end necessarily
-            // shrinks it. Mobile 0.28 = 0.50 lifted by 12% of a viewport height for the
-            // zoom-out, then by a further 10% to raise the ending position; together that
-            // finishes 15% smaller and 22% of a viewport height higher than it used to.
-            const END_DROP   = vh * (isMobile ? 0.28 : 0.55);
+            // image finishes and how far out it has zoomed - lowering the end necessarily
+            // enlarges it. Mobile 0.43 = 0.28 lowered by a further 15% of a viewport
+            // height, which also gives back about 12% of the size that raising it took off.
+            const END_DROP   = vh * (isMobile ? 0.43 : 0.55);
             const drop = START_DROP + ((END_DROP - START_DROP) * progress);
 
             // Mobile only: slide the picture left of centre so the framing is not locked to
