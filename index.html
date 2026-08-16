@@ -99,7 +99,11 @@
                  mobile media query matches, so a desktop visit never downloads the
                  several MB of video sitting hidden in the DOM.
                  Whichever of the two is active is sized on scroll by the handler further
-                 down this file, which picks it with the same 860px test. -->
+                 down this file, which picks it with the same 860px test.
+                 muted is required, not cosmetic: both files carry a silent audio track
+                 (see the note in the script below) and autoplay would be refused without
+                 it. loop is a hint here rather than the mechanism - the script does not
+                 trust it. -->
             <div class="layer-background" id="background">
                 <img src="images/parallax/background.webp?v=2" alt="Background">
                 <video muted loop playsinline preload="none" aria-hidden="true"></video>
@@ -204,8 +208,18 @@
             // WebM first: Android Chrome and Firefox take the VP9 and it is ~30% lighter.
             // iOS Safari skips it and falls through to the H.264 MP4. Both are transcodes -
             // the delivered master was HEVC 10-bit, which only Safari can decode.
-            ['images/parallax/background.webm', 'video/webm'],
-            ['images/parallax/background.mp4', 'video/mp4']
+            //
+            // Both also carry a SILENT audio track, deliberately. They were encoded with
+            // -an at first and the clip then played once on a phone and froze on its last
+            // frame: iOS refuses to loop a file with no audio stream at all. The track is
+            // mono 8kbps of nothing and costs under 4KB. Do not strip it again.
+            //
+            // ?v=2 is load-bearing, not decoration: the silent-audio re-encode kept the
+            // same filenames, and vercel.json serves /images with a one-year immutable
+            // cache. Without a new key every returning phone keeps the old silent-frozen
+            // file forever. Bump it on any future re-encode.
+            ['images/parallax/background.webm?v=2', 'video/webm'],
+            ['images/parallax/background.mp4?v=2', 'video/mp4']
         ];
 
         function attach() {
@@ -237,13 +251,29 @@
                 play();
             });
 
-            /* If 'ended' ever fires, looping has failed outright - some mobile browsers
-               drop it under Low Power Mode. Rewind by hand. This deliberately does NOT
-               sit behind an !ended check, which is the bug that would have made the
-               listener above give up in exactly the case it is needed for. */
+            /* If 'ended' ever fires, the loop attribute has failed outright. Rewind by
+               hand. This deliberately does NOT sit behind an !ended check, which is the
+               bug that would have made the listener above give up in exactly the case it
+               is needed for. */
             video.addEventListener('ended', function () {
                 video.currentTime = 0;
                 play();
+            });
+
+            /* Belt and braces: rewind just BEFORE the end rather than waiting to be told
+               the clip finished. Where 'loop' is honoured this never fires, because the
+               browser has already wrapped by the time the last frames play. Where it is
+               not, this restarts the clip without it ever reaching a stopped state, so
+               the hero cannot be left frozen on the final frame.
+               REWIND_MARGIN is one frame at 24fps plus a little slack - large enough to
+               beat the end, small enough that nothing visible is skipped. */
+            var REWIND_MARGIN = 0.06;
+            video.addEventListener('timeupdate', function () {
+                if (!video.duration || isNaN(video.duration)) return;
+                if (video.currentTime >= video.duration - REWIND_MARGIN) {
+                    video.currentTime = 0;
+                    play();
+                }
             });
 
             /* Coming back to the tab is the most common way it is found stopped, and the
