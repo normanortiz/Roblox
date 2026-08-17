@@ -986,6 +986,8 @@ window.addEventListener('load', function() {
             //   SIZE_*  - image height as a multiple of the coverage floor. 1.0 = smallest
             //             possible (exactly covers). Larger = more zoomed in.
             //   *_DROP  - how far it is pushed below the viewport bottom. Position only.
+            //             On mobile the drop still sets the SIZE at both ends, but the
+            //             ending POSITION is overridden further down - see END_ANCHOR.
             const SIZE_START = 1.30;   // at rest - a step further out than 1.425
             const SIZE_END   = 1.0;    // by ANIM_END - fully zoomed out, ~98% of the width
             // Mobile start 1.05 = 0.95 plus a further 10% of a viewport height.
@@ -994,14 +996,9 @@ window.addEventListener('load', function() {
             // meant every "lower the start" request silently dragged the ending position down
             // with it. 0.55 is where the end sat when it was last set deliberately.
             //
-            // On mobile the width term below never wins, so the coverage floor IS vh + drop
-            // and the image finishes at exactly its no-gap minimum. That makes the ending
-            // size and the ending drop the same number - a lower end is necessarily a
-            // larger, less zoomed-out end, because anything smaller would expose the top.
-            // So on mobile this number is the only control there is for BOTH where the
-            // image finishes and how far out it has zoomed - lowering the end necessarily
-            // enlarges it. Mobile 0.43 = 0.28 lowered by a further 15% of a viewport
-            // height, which also gives back about 12% of the size that raising it took off.
+            // On mobile the width term below never wins, so the coverage floor IS vh + drop:
+            // this number therefore sets how far the picture has zoomed out by ANIM_END.
+            // Mobile 0.43 = 0.28 lowered by a further 15% of a viewport height.
             const END_DROP   = vh * (isMobile ? 0.43 : 0.55);
             const drop = START_DROP + ((END_DROP - START_DROP) * progress);
 
@@ -1040,7 +1037,24 @@ window.addEventListener('load', function() {
             // viewport instead of travelling with the hero. Frozen at ANIM_END, after which
             // it rides away with the page at 1:1 like any normal element.
             const compensated = Math.min(scrollY, heroHeight * (ANIM_END / 100));
-            const bottomPx = heroPx - vh - compensated - drop;
+            let bottomPx = heroPx - vh - compensated - drop;
+
+            // MOBILE ENDING POSITION ONLY. The offset is interpolated from whatever it is
+            // at rest to END_ANCHOR by ANIM_END. Because the (1 - progress) term is 1 at
+            // progress 0, the starting position and the whole zoom-out are EXACTLY as they
+            // were - only where the picture comes to rest moves. Past ANIM_END progress is
+            // pinned at 1, so it holds END_ANCHOR and rides with the hero from there.
+            //
+            // END_ANCHOR is negative, i.e. that far BELOW the hero's bottom edge. 0.25 of a
+            // viewport height is what puts the bottom edge of the white plate level with
+            // the bottom of the figure, so his stack of bills sits ON the plate instead of
+            // floating over the crowd behind it. Raising this number lifts the picture and
+            // exposes more of the crowd below the plate; lowering it pushes the plate off
+            // the bottom of the screen.
+            if (isMobile) {
+                const END_ANCHOR = -vh * 0.25;
+                bottomPx = (bottomPx * (1 - progress)) + (END_ANCHOR * progress);
+            }
 
             img.style.height = height + 'px';
             // The still keeps width:auto exactly as before. The clip gets an explicit
