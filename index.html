@@ -863,6 +863,62 @@ window.addEventListener('load', function() {
     }
     window.__runBillsIntro = runBillsIntro;
 
+    /* AUTO SCROLL NUDGE - desktop and mobile.
+       Once the hero has finished assembling the page scrolls itself down by 1% of the
+       hero and straight back up to the top, so the parallax gives a visible hint that
+       there is more below.
+
+       TIMING IS NOT COSMETIC. The load-in animations for the logo and the figure both
+       hand over to the scroll handler the first time scrollPercent goes above 0 (see the
+       logoIntroDone / jimmyIntroDone branches in the handler): a nudge fired while either
+       is still playing would cut it off mid-flight. NUDGE_DELAY_MS is measured from the
+       bills burst, which is the last thing to start - the figure's 1000ms rise began 450ms
+       before it and the burst itself runs ~1.26s, so 1400ms clears both.
+
+       1% is also deliberately under the 30px the confetti arms at, so the burst is still
+       saved for a real scroll.
+
+       If the visitor scrolls during the nudge it abandons the return trip rather than
+       yanking the page back up under them. */
+    const NUDGE_PERCENT  = 1;      // of the hero, i.e. the same unit as scrollPercent
+    const NUDGE_DELAY_MS = 1400;   // after the bills burst starts
+    const NUDGE_DOWN_MS  = 600;
+    const NUDGE_HOLD_MS  = 150;    // beat at the bottom of the nudge
+    const NUDGE_UP_MS    = 600;
+    let nudging = false;           // also freezes the scroll cue - see its block below
+    function runScrollNudge() {
+        if (!scroll || nudging) return;
+
+        // Any real input cancels the trip back, and the flag is dropped so the cue
+        // resumes following the scroll immediately.
+        let cancelled = false;
+        const cancel = function () { cancelled = true; nudging = false; };
+        const opts = { passive: true };
+        window.addEventListener('wheel', cancel, opts);
+        window.addEventListener('touchstart', cancel, opts);
+        window.addEventListener('keydown', cancel, opts);
+        const release = function () {
+            window.removeEventListener('wheel', cancel, opts);
+            window.removeEventListener('touchstart', cancel, opts);
+            window.removeEventListener('keydown', cancel, opts);
+        };
+
+        nudging = true;
+        scroll.scrollTo(heroHeight * (NUDGE_PERCENT / 100), { duration: NUDGE_DOWN_MS });
+
+        // Driven on timers rather than scrollTo's callback: that callback only fires on an
+        // exact landing, and a cancelled or interrupted trip would leave it hanging.
+        setTimeout(function () {
+            if (cancelled) { release(); return; }
+            scroll.scrollTo(0, { duration: NUDGE_UP_MS });
+            setTimeout(function () {
+                nudging = false;
+                release();
+            }, NUDGE_UP_MS + 100);
+        }, NUDGE_DOWN_MS + NUDGE_HOLD_MS);
+    }
+    window.__runScrollNudge = runScrollNudge;   // exposed like the other load-in steps
+
     function runLogoIntro() {
         if (!logo || logoIntroDone) return;
         const isMobile = window.innerWidth <= 860;
@@ -905,6 +961,9 @@ window.addEventListener('load', function() {
                             scrollCueReady = true;
                             scrollCue.style.opacity = '1';
                         }
+                        // ...then demonstrate it. Held until the burst has landed - see
+                        // runScrollNudge for why it cannot run any earlier than this.
+                        setTimeout(runScrollNudge, NUDGE_DELAY_MS);
                     }, 450);
                 }, 300);
             }, 700);
@@ -990,8 +1049,10 @@ window.addEventListener('load', function() {
             //             ending POSITION is overridden further down - see END_ANCHOR.
             const SIZE_START = 1.30;   // at rest - a step further out than 1.425
             const SIZE_END   = 1.0;    // by ANIM_END - fully zoomed out, ~98% of the width
-            // Mobile start 1.05 = 0.95 plus a further 10% of a viewport height.
-            const START_DROP = vh * (isMobile ? 1.05 : 1.45);
+            // Mobile start 1.10 = 1.05 plus a further 5% of a viewport height. The coverage
+            // floor on mobile is vh + drop, so lowering the start also enlarges the picture
+            // at rest by that same 5% - the two cannot be separated here.
+            const START_DROP = vh * (isMobile ? 1.10 : 1.45);
             // Absolute, NOT derived from START_DROP. It used to be START_DROP + 0.10, which
             // meant every "lower the start" request silently dragged the ending position down
             // with it. 0.55 is where the end sat when it was last set deliberately.
@@ -1045,14 +1106,13 @@ window.addEventListener('load', function() {
             // were - only where the picture comes to rest moves. Past ANIM_END progress is
             // pinned at 1, so it holds END_ANCHOR and rides with the hero from there.
             //
-            // END_ANCHOR is negative, i.e. that far BELOW the hero's bottom edge. 0.25 of a
-            // viewport height is what puts the bottom edge of the white plate level with
-            // the bottom of the figure, so his stack of bills sits ON the plate instead of
-            // floating over the crowd behind it. Raising this number lifts the picture and
-            // exposes more of the crowd below the plate; lowering it pushes the plate off
-            // the bottom of the screen.
+            // END_ANCHOR is negative, i.e. that far BELOW the hero's bottom edge. Raising
+            // this number lifts the picture and exposes more of the crowd below the plate;
+            // lowering it pushes the plate off the bottom of the screen. 0.15 is 0.25
+            // raised by 15% and then lowered again by 5% of a viewport height. Position
+            // only - the size at ANIM_END is set by END_DROP above and is unaffected.
             if (isMobile) {
-                const END_ANCHOR = -vh * 0.25;
+                const END_ANCHOR = -vh * 0.15;
                 bottomPx = (bottomPx * (1 - progress)) + (END_ANCHOR * progress);
             }
 
@@ -1197,8 +1257,10 @@ window.addEventListener('load', function() {
         // 5d. SCROLL CUE - out as soon as the page moves at all. Binary rather than
         // proportional: the CSS transition does the smoothing, so this reads as a quick
         // fade the instant scrolling starts, and it returns on the way back to the top.
+        // Held on through the auto nudge (see runScrollNudge), which crosses the 0.5%
+        // threshold and would otherwise blink it off and straight back on.
         if (scrollCue && scrollCueReady) {
-            scrollCue.style.opacity = scrollPercent > 0.5 ? '0' : '1';
+            scrollCue.style.opacity = (scrollPercent > 0.5 && !nudging) ? '0' : '1';
         }
 
         // 5c. MOBILE BILLS - four of them, and the only bills mobile shows. Viewport-anchored:
