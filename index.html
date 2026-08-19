@@ -38,7 +38,7 @@
 <meta name="author" content="$100M Robux Sweepstake">
 
 <link href="https://fonts.cdnfonts.com/css/monument-extended" rel="stylesheet">
-<link rel="stylesheet" href="lib/style.css?v=99" type="text/css">
+<link rel="stylesheet" href="lib/style.css?v=100" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <link rel="stylesheet" href="lib/locomotive-scroll.css">
 
@@ -90,22 +90,19 @@
         <div class="parallax-container">
 
             <!-- Layer 1: Background (furthest back)
-                 Two variants, one shown per breakpoint - see the display swap at the
-                 860px media query in lib/style.css:
-                   desktop (>860px) - the static background.webp, unchanged
-                   mobile  (<=860px) - the looping clip
-                 The <video> deliberately ships with NO src, poster or preload: those are
-                 attached by the attachBackgroundVideo() script below, and only when the
-                 mobile media query matches, so a desktop visit never downloads the
-                 several MB of video sitting hidden in the DOM.
-                 Whichever of the two is active is sized on scroll by the handler further
-                 down this file, which picks it with the same 860px test.
-                 muted is required, not cosmetic: both files carry a silent audio track
-                 (see the note in the script below) and autoplay would be refused without
-                 it. loop is a hint here rather than the mechanism - the script does not
-                 trust it. -->
+                 The static background.webp (crowd/plate still) is now shown at EVERY
+                 width - desktop and mobile alike. The <video> is kept in the DOM but is
+                 display:none everywhere (lib/style.css) and gets no src: the
+                 attachBackgroundVideo() script below is switched off at USE_MOBILE_VIDEO,
+                 so nothing downloads. Flip that flag back to true, and restore the mobile
+                 display swap in the stylesheet, to bring the clip back once the new
+                 mobile file lands.
+                 The still is sized on scroll by the handler further down this file, which
+                 keeps a separate 860px test only for the mobile FRAMING numbers.
+                 muted/loop/playsinline stay on the element so the clip needs no markup
+                 change when it returns. -->
             <div class="layer-background" id="background">
-                <img src="images/parallax/background.webp?v=2" alt="Background">
+                <img src="images/parallax/background.webp?v=3" alt="Background">
                 <video muted loop playsinline preload="none" aria-hidden="true"></video>
             </div>
 
@@ -200,8 +197,15 @@
        a video it will never display. Re-checked on breakpoint change so a rotated tablet
        or a narrowed window still gets it; the attached flag makes that a one-time cost. */
     (function attachBackgroundVideo() {
+        // MASTER SWITCH. false = mobile shows the same still as desktop and this whole
+        // function does nothing, so no phone ever downloads background.webm/.mp4. Set it
+        // back to true when the new mobile clip is in place - and re-add the
+        // `.layer-background img { display:none }` / `video { display:block }` swap in the
+        // 860px query in lib/style.css, plus the video branch in the scroll handler below.
+        var USE_MOBILE_VIDEO = false;
+
         var video = document.querySelector('.layer-background video');
-        if (!video) return;
+        if (!video || !USE_MOBILE_VIDEO) return;
 
         var mobile = window.matchMedia('(max-width: 860px)');
         var SOURCES = [
@@ -380,9 +384,9 @@ window.addEventListener('load', function() {
                 document.getElementById('c-loader').classList.add('loaded');
 
                 // Fade the hero background up out of the black preloader over 1.5s.
-                // Both variants get the class: only one of them is displayed at a time
-                // (860px swap in lib/style.css), so the other one fading is a no-op and
-                // this stays correct if the breakpoint is crossed later.
+                // Both variants get the class: the clip is display:none at every width
+                // right now, so that half is a no-op and this stays correct if the video
+                // is switched back on later.
                 document.querySelectorAll('.layer-background img, .layer-background video')
                     .forEach(function (el) { el.classList.add('is-visible'); });
 
@@ -1022,14 +1026,12 @@ window.addEventListener('load', function() {
         // constant, so from then on the image simply rides with the hero - same direction,
         // same speed as the scroll.
         //
-        // Only one of the two background elements is displayed at a time, so size the one
-        // this breakpoint actually shows. The 860px test is the same one used by the
-        // display swap in lib/style.css and by isMobile below - they must agree, or the
-        // hidden element would be the one getting sized.
+        // The still is what every width shows now (the clip is display:none everywhere -
+        // see USE_MOBILE_VIDEO above), so the <img> is always the element being sized.
+        // bgIsMobile no longer picks the element; it only selects the mobile FRAMING
+        // numbers below (drop, shift, end anchor), which stay tuned for phone screens.
         const bgIsMobile = window.innerWidth <= 860;
-        const img = background
-            ? background.querySelector(bgIsMobile ? 'video' : 'img')
-            : null;
+        const img = background ? background.querySelector('img') : null;
         if (background && img) {
             const ANIM_END = 30;               // matches the figure's growth window
             const MAX_WIDTH_VISIBLE = 0.98;    // never show more than 98% of the image width
@@ -1063,25 +1065,30 @@ window.addEventListener('load', function() {
             const END_DROP   = vh * (isMobile ? 0.43 : 0.55);
             const drop = START_DROP + ((END_DROP - START_DROP) * progress);
 
-            // Mobile only: slide the picture left of centre so the framing is not locked to
-            // the middle of the plate. A fraction of the image width rather than of the
-            // viewport, so the crop holds still while the zoom animates - a viewport-based
-            // offset would drift across the artwork as the image shrinks. Negative moves
-            // the picture left, which brings the right-hand side of the frame into view.
-            const SHIFT_X = isMobile ? -0.05 : 0;
+            // Mobile only: horizontal framing offset, as a fraction of the image WIDTH
+            // rather than of the viewport, so the crop holds still while the zoom animates -
+            // a viewport-based offset would drift across the artwork as the image shrinks.
+            // Negative moves the picture left (brings the right of the frame into view),
+            // positive moves it right.
+            //
+            // Interpolated over the same ANIM_END window as the size and the drop, so the
+            // two ends can be framed separately: START is where it sits at rest, END where
+            // it comes to rest after the zoom-out. Past ANIM_END progress is pinned at 1,
+            // so the ending offset holds and the picture rides away with the hero.
+            //   START 0     - dead centre (the original -0.05 moved 5% back to the right).
+            //   END  -0.02  - centre, then 2% of the image width to the left (3% left,
+            //                  brought 1% back to the right).
+            const SHIFT_X_START = isMobile ? 0 : 0;
+            const SHIFT_X_END   = isMobile ? -0.02 : 0;
+            const SHIFT_X = SHIFT_X_START + ((SHIFT_X_END - SHIFT_X_START) * progress);
 
             const heroPx = background.clientHeight || heroHeight;
-            // Intrinsic size comes from different properties on the two elements, and both
-            // read 0 until the file has loaded, so each falls back to its known dimensions
-            // for the handful of frames before that: 1920x1080 for the clip, 2339x1792 for
-            // the still.
-            const aspect = bgIsMobile
-                ? ((img.videoWidth && img.videoHeight)
-                    ? img.videoWidth / img.videoHeight
-                    : 1920 / 1080)
-                : ((img.naturalWidth && img.naturalHeight)
-                    ? img.naturalWidth / img.naturalHeight
-                    : 2339 / 1792);
+            // Intrinsic size reads 0 until the file has decoded, so fall back to the
+            // still's known dimensions (1200x896) for the handful of frames before that.
+            // Same element, same numbers, at every width.
+            const aspect = (img.naturalWidth && img.naturalHeight)
+                ? img.naturalWidth / img.naturalHeight
+                : 1200 / 896;
 
             // Floor: tall enough to cover the viewport (plus the drop), and wide enough that
             // no more than MAX_WIDTH_VISIBLE of the image is on screen. On desktop the width
@@ -1108,23 +1115,22 @@ window.addEventListener('load', function() {
             //
             // END_ANCHOR is negative, i.e. that far BELOW the hero's bottom edge. Raising
             // this number lifts the picture and exposes more of the crowd below the plate;
-            // lowering it pushes the plate off the bottom of the screen. 0.15 is 0.25
-            // raised by 15% and then lowered again by 5% of a viewport height. Position
-            // only - the size at ANIM_END is set by END_DROP above and is unaffected.
+            // lowering it pushes the plate off the bottom of the screen. 0.30 is 0.15
+            // pushed down by 10%, then 3%, then a further 2% of a viewport height.
+            // Position only - the size at ANIM_END is set by END_DROP and is unaffected.
             if (isMobile) {
-                const END_ANCHOR = -vh * 0.15;
+                const END_ANCHOR = -vh * 0.30;
                 bottomPx = (bottomPx * (1 - progress)) + (END_ANCHOR * progress);
             }
 
             img.style.height = height + 'px';
-            // The still keeps width:auto exactly as before. The clip gets an explicit
-            // width because a <video> has no intrinsic ratio until metadata has loaded,
-            // and auto would collapse it to the 300x150 default until then. The number is
-            // what auto resolves to afterwards, so this only fixes the first frames.
-            img.style.width = bgIsMobile ? (height * aspect) + 'px' : 'auto';
+            // width:auto at every width now: the <img> has an intrinsic ratio from the
+            // moment it decodes, so it never needs the explicit width the <video> did.
+            img.style.width = 'auto';
             img.style.bottom = bottomPx + 'px';
-            // -50% centres it; the second translate is the mobile off-centre framing above.
-            // Desktop resolves to 0px, leaving the transform identical to what it was.
+            // -50% centres it; the second translate is the mobile off-centre framing above,
+            // interpolated from SHIFT_X_START to SHIFT_X_END across the scroll.
+            // Desktop resolves to 0px at every point, leaving its transform unchanged.
             img.style.transform =
                 'translateX(-50%) translateX(' + (height * aspect * SHIFT_X) + 'px)';
         }

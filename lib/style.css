@@ -1192,8 +1192,8 @@ body {
    aspect, so it scales as one piece and the sides simply crop.
    No object-fit: the element IS the picture, so it can never letterbox.
 
-   Both variants share this geometry. Only one is ever displayed - the img on desktop,
-   the video below 860px - see the swap at the end of this block. */
+   Both variants share this geometry, but only the img is displayed - at every width.
+   The video is kept for the replacement mobile clip and is display:none throughout. */
 .layer-background img,
 .layer-background video {
     position: absolute;
@@ -1220,21 +1220,15 @@ body {
     opacity: 1;
 }
 
-/* Desktop shows the still; the clip is display:none so it is never composited. It also
-   has no src at this width - index.html only attaches the sources under the matching
-   860px query, so this is a hidden empty element, not a hidden download. */
+/* The clip is display:none at EVERY width - desktop and mobile both show the still.
+   It also has no src anywhere: index.html's attachBackgroundVideo() is switched off at
+   USE_MOBILE_VIDEO, so this is a hidden empty element, not a hidden download.
+   To bring the mobile clip back: flip that flag to true and restore the swap that used
+   to live here - `@media (max-width:860px){ .layer-background img{display:none}
+   .layer-background video{display:block} }` - and the video branch in the scroll
+   handler in index.html. */
 .layer-background video {
     display: none;
-}
-
-@media (max-width: 860px) {
-    .layer-background img {
-        display: none;
-    }
-
-    .layer-background video {
-        display: block;
-    }
 }
 
 /* Layer 2: Overlay - Over background - Frosted glass effect */
